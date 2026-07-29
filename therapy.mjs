@@ -595,38 +595,14 @@ $('.n4-stats_heading').first().empty().text('Progress you can actually feel');
 
 // (9) service-card eyebrows: a brief explanation reads better than repeating
 //     the insurance line on every card
-// Match each note to its card by HEADING text — a positional loop hit a mix of
-// card types and left two cards on the old insurance line.
-const NOTE_BY_HEADING = {
-  'anxiety'   : 'Individual · weekly to start',
-  'trauma'    : 'Paced by you · stability first',
-  'couples'   : 'Both partners · 60-minute sessions',
-  'teens'     : 'Ages 13–24 · parent updates by agreement',
-  'group'     : '6–8 people · 8-week closed cohort',
-  'medication': 'Prescribing coordinated with your therapist',
-  'virtual'   : 'Multi-day format · trauma and couples',
-};
-const noteFor = heading => {
-  const h = (heading || '').toLowerCase();
-  for (const k of Object.keys(NOTE_BY_HEADING)) if (h.includes(k)) return NOTE_BY_HEADING[k];
-  return null;
-};
-// programme cards: replace the repeated insurance eyebrow with a real descriptor
+// Card descriptors removed — the eyebrow row is dropped entirely on programme
+// and care cards (the "Self-pay"/insurance lines are already gone).
 $('.n4-services_card_wrap, .n4-swiper_services_swiper_slide, .n4-services-care_card').each((_, card) => {
-  const $c = $(card);
-  const heading = $c.find('.n4-services_card_heading, .n4-services-care_card_title').first().text();
-  const note = noteFor(heading);
-  if (!note) return;
-  const eb = $c.find('.n4-g_eyebrow_text').first();
-  if (eb.length && !/^NEW$/i.test((eb.text() || '').trim())) eb.text(note);
-  // care cards: the "Self-pay" subtitle reads better as an explanation too
-  const sub = $c.find('.n4-services_card_subtitle').first();
-  if (sub.length) sub.text(note);
-});
-// any eyebrow/subtitle still carrying the generic lines
-$('.n4-g_eyebrow_text, .n4-services_card_subtitle').each((_, el) => {
-  const t = ($(el).text() || '').trim();
-  if (/^(Most insurance accepted|Self-pay)$/i.test(t)) $(el).text('Ask about fees and coverage');
+  $(card).find('.n4-g_eyebrow_text').each((_, eb) => {
+    if (/^NEW$/i.test(($(eb).text() || '').trim())) return;   // keep the NEW tags
+    const wrap = $(eb).closest('.n4-g_eyebrow_wrap, .n4-g_eyebrow');
+    (wrap.length ? wrap : $(eb)).remove();
+  });
 });
 
 // (1) logo marquee — the reference drove this from JS which we stripped, and the
@@ -784,6 +760,25 @@ $('.n4-g_eyebrow_text, .n4-services_card_subtitle').each((_, el) => {
 <\/script>`);
   }
 }
+
+
+// Audience panel: the reference swaps the visual per link via JS we removed, so
+// image 0 stayed at opacity 1 and the first row read as permanently selected.
+// Re-implement the swap on hover/focus.
+$('body').append(`<script>
+(function(){
+  var items=[].slice.call(document.querySelectorAll('.n4-industry_link_item'));
+  var imgs=[].slice.call(document.querySelectorAll('.n4-industry_visual_img'));
+  if(!items.length||!imgs.length) return;
+  imgs.forEach(function(im){ im.style.transition='opacity .35s ease'; });
+  function show(i){ imgs.forEach(function(im,k){ im.style.opacity = (k===i?'1':'0'); }); }
+  items.forEach(function(el,i){
+    el.addEventListener('mouseenter',function(){ show(i); });
+    el.addEventListener('focusin',function(){ show(i); });
+  });
+  show(0);
+})();
+<\/script>`);
 
 /* ─────────────── 4t. LATE FIXES ─────────────── */
 
