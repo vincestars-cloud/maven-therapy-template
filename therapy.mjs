@@ -375,13 +375,30 @@ $('script:not([src])').each((_, el) => {
 // 2. stats — realistic practice metrics. These are TEMPLATE values: a practice
 //    must substitute its own before publishing (see README).
 const STATS = [
-  ['78%', 'of clients report meaningful improvement within their first 12 sessions'],
-  ['4 days', 'average wait from first enquiry to a booked appointment'],
-  ['91%', 'continue past the initial course of care'],
-  ['4.9', 'average client rating across Google and Psychology Today'],
+  ['78%',       'of clients report meaningful improvement within their first 12 sessions', 78],
+  ['Same week', 'most first appointments are offered within seven days of enquiry',        100],
+  ['91%',       'choose to continue past their initial course of care',                    91],
+  ['4.9',       'average client rating across Google and Psychology Today',                98],
 ];
 $('.n4-stats_item_number').each((i, el) => { if (STATS[i]) $(el).text(STATS[i][0]); });
 $('.n4-stats_item_test').each((i, el) => { if (STATS[i]) $(el).text(STATS[i][1]); });
+
+// progress ring — sized to the measured 320x320 .n4-stats_item_wrap so it traces
+// the existing decorative circle instead of sitting inside it and crossing the
+// caption text (measure the container; do not guess the radius)
+$('.n4-stats_item_wrap').each((i, wrap) => {
+  const pct = (STATS[i] || [])[2] || 0;
+  const R = 155, C = 2 * Math.PI * R;
+  const dash = (C * pct / 100).toFixed(1);
+  $(wrap).css('position', 'relative').prepend(
+    `<svg viewBox="0 0 320 320" aria-hidden="true" style="position:absolute;inset:0;` +
+    `width:100%;height:100%;transform:rotate(-90deg);pointer-events:none;z-index:0">` +
+    `<circle cx="160" cy="160" r="${R}" fill="none" stroke="rgba(1,49,38,.09)" stroke-width="10"/>` +
+    `<circle cx="160" cy="160" r="${R}" fill="none" stroke="#028c74" stroke-width="10" ` +
+    `stroke-linecap="round" stroke-dasharray="${dash} ${C.toFixed(1)}"/></svg>`);
+  $(wrap).find('.n4-stats_item_body').css({position:'relative','z-index':'1'});
+});
+
 $('.n4-stats_body .n4-stats_text, .n4-stats_body p').first()
   .text('We review progress openly with every client — these are the practice-wide numbers behind that.');
 
@@ -510,6 +527,63 @@ $('.n4-g_clickable_text').each((_, sr) => {
   const lbl = $(sr).closest('.n4-btn_main_wrap, .n4-g_clickable_wrap').parent()
                 .find('.n4-btn_main_text').first().text().trim();
   $(sr).text(lbl || 'Learn more');
+});
+
+
+/* ─────────────── 4t. LATE FIXES ─────────────── */
+
+// 1. Rive canvas: the .riv asset is the reference's own file, loaded from their
+//    CDN, with their copy BAKED INTO the animation. Canvas-rendered text is
+//    invisible to every DOM/text sweep, which is why it survived. Remove it.
+$('[class*="rive"], canvas').each((_, el) => {
+  const w = $(el).closest('.n4-hero_main_shape_wrap, .n4-rive-animation-wrapper');
+  (w.length ? w : $(el)).remove();
+});
+$('script:not([src])').each((_, el) => {
+  const b = $(el).html() || '';
+  if (/\.riv\b|riveInstance|rive\.animations/i.test(b)) $(el).remove();
+});
+
+// 2. tracking that survived the first KILL list (different hostnames)
+const KILL2 = /intellimize|hs-analytics|hs-banner|hsadspixel|hs-scripts|hubspot|gs\.mountain|js\.cookie|mountain\.com|storage\.html/i;
+// Everything functional was localised to ./js/ — so ANY remaining remote script
+// src is third-party tracking (SalesLoft, LinkedIn Insight, HubSpot, Intellimize…)
+// still pointed at the reference's accounts. Drop them all.
+$('script[src]').each((_, el) => {
+  const src = $(el).attr('src') || '';
+  if (/^https?:\/\/|^\/\//.test(src)) $(el).remove();
+});
+$('noscript').each((_, el) => { if (/https?:\/\//.test($(el).html() || '')) $(el).remove(); });
+$('script:not([src])').each((_, el) => { if (KILL2.test($(el).html() || '')) $(el).remove(); });
+$('iframe[src], img[src]').each((_, el) => { if (KILL2.test($(el).attr('src') || '')) $(el).remove(); });
+
+// 3. Our Clinicians -> Careers
+$('.n4-footer_link_text, .nav__dropdown-item, .n4-industry_links_heading').each((_, el) => {
+  if (/our clinicians/i.test($(el).text())) $(el).text('Careers');
+});
+
+// 4. real carrier logos (SVGs from the existing asset set) instead of wordmarks
+const LOGOS = [
+  ['aetna.svg', 'Aetna'], ['bcbs.svg', 'Blue Cross Blue Shield'], ['cigna.svg', 'Cigna'],
+  ['uhc.svg', 'UnitedHealthcare'], ['humana.svg', 'Humana'], ['oscar.svg', 'Oscar'],
+  ['hsafsa.svg', 'HSA / FSA eligible'],
+];
+$('.n4-marquee_logo_wrap').each((i, el) => {
+  const [file, alt] = LOGOS[i % LOGOS.length];
+  $(el).empty().append(
+    `<span style="display:inline-flex;align-items:center;justify-content:center;height:58px;` +
+    `padding:0 22px;border-radius:10px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.14)">` +
+    `<img src="./media/insurers/${file}" alt="${alt}" loading="lazy" ` +
+    `style="height:30px;width:auto;max-width:150px;object-fit:contain"></span>`);
+});
+
+// 5. MP4 is now the smaller file — serve it first
+$('script:not([src])').each((_, el) => {
+  let b = $(el).html() || '';
+  if (!/hero\.webm/.test(b)) return;
+  b = b.replace(/'<source src="\.\/media\/hero\.webm" type="video\/webm">'\+\s*'<source src="\.\/media\/hero\.mp4" type="video\/mp4">'/,
+    `'<source src="./media/hero.mp4" type="video/mp4">'+'<source src="./media/hero.webm" type="video/webm">'`);
+  $(el).html(b);
 });
 
 /* ─────────────── 4w. REMAINING FIXES ─────────────── */
