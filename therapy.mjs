@@ -530,6 +530,153 @@ $('.n4-g_clickable_text').each((_, sr) => {
 });
 
 
+
+/* ─────────────── 4s. CONTENT + STRUCTURE REVISIONS ─────────────── */
+
+// (2) nav — final item set
+{
+  const NAV = ['Approach', 'Services', 'About', 'Reviews', 'Contact'];
+  const menu = $('.nav-menu-4, .w-nav-menu').first();
+  if (menu.length) {
+    menu.empty();
+    NAV.forEach(label => menu.append(
+      `<a href="#${label.toLowerCase()}" class="nav__link-item cc-nav" ` +
+      `style="display:inline-flex;align-items:center;height:64px;padding:20px 18px;` +
+      `font:600 16px/24px Inter,Arial,sans-serif;color:#263633">${label}</a>`));
+  }
+  $('.cta__green').first().text('Book a Consult');
+}
+
+// (3) hero sub-line beneath the buttons
+{
+  const grp = $('.n4-hero_btn_group').first();
+  if (grp.length && !grp.next('.hero-subnote').length) {
+    grp.after('<p class="hero-subnote" style="margin-top:18px;font:400 14px/1.5 Inter,Arial,sans-serif;' +
+      'color:rgba(255,255,255,.66)">Virtual and in-person &middot; Most major insurance accepted</p>');
+  }
+}
+
+// (4) hero subhead
+$('.n4-hero_main_text').first().text(
+  'Evidence-based counseling for anxiety, trauma, grief and relationships — with a therapist who listens first and paces the work to you.');
+
+// (5) services lede
+$('.n4-services_text').first().text(
+  'Every person arrives with a different history and a different goal. These are the areas we work in most — select any one to see how the work actually runs.');
+
+// (8) services heading + (6) stats heading
+$('.n4-services_heading').first().empty().text('Care shaped around your situation');
+$('.n4-stats_heading').first().empty().text('Progress you can actually feel');
+
+// (9) service-card eyebrows: a brief explanation reads better than repeating
+//     the insurance line on every card
+// Match each note to its card by HEADING text — a positional loop hit a mix of
+// card types and left two cards on the old insurance line.
+const NOTE_BY_HEADING = {
+  'anxiety'   : 'Individual · weekly to start',
+  'trauma'    : 'Paced by you · stability first',
+  'couples'   : 'Both partners · 60-minute sessions',
+  'teens'     : 'Ages 13–24 · parent updates by agreement',
+  'group'     : '6–8 people · 8-week closed cohort',
+  'medication': 'Prescribing coordinated with your therapist',
+  'virtual'   : 'Multi-day format · trauma and couples',
+};
+const noteFor = heading => {
+  const h = (heading || '').toLowerCase();
+  for (const k of Object.keys(NOTE_BY_HEADING)) if (h.includes(k)) return NOTE_BY_HEADING[k];
+  return null;
+};
+// programme cards: replace the repeated insurance eyebrow with a real descriptor
+$('.n4-services_card_wrap, .n4-swiper_services_swiper_slide, .n4-services-care_card').each((_, card) => {
+  const $c = $(card);
+  const heading = $c.find('.n4-services_card_heading, .n4-services-care_card_title').first().text();
+  const note = noteFor(heading);
+  if (!note) return;
+  const eb = $c.find('.n4-g_eyebrow_text').first();
+  if (eb.length && !/^NEW$/i.test((eb.text() || '').trim())) eb.text(note);
+  // care cards: the "Self-pay" subtitle reads better as an explanation too
+  const sub = $c.find('.n4-services_card_subtitle').first();
+  if (sub.length) sub.text(note);
+});
+// any eyebrow/subtitle still carrying the generic lines
+$('.n4-g_eyebrow_text, .n4-services_card_subtitle').each((_, el) => {
+  const t = ($(el).text() || '').trim();
+  if (/^(Most insurance accepted|Self-pay)$/i.test(t)) $(el).text('Ask about fees and coverage');
+});
+
+// (1) logo marquee — the reference drove this from JS which we stripped, and the
+//     real CSS has no @keyframes. Add a self-contained CSS loop: duplicate the
+//     track so translateX(-50%) wraps seamlessly.
+{
+  const wrap = $('.n4-main_marquee_wrap').first();
+  if (wrap.length) {
+    const lists = wrap.find('.n4-main_marquee_list');
+    const first = lists.first();
+    lists.slice(1).remove();                                  // keep one, then clone it
+    first.clone().appendTo(wrap);
+    $('head').append(`<style>
+      .n4-main_marquee_wrap{display:flex;width:max-content;animation:tmarquee 42s linear infinite}
+      .n4-main_marquee_component{overflow:hidden;
+        -webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);
+        mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)}
+      .n4-main_marquee_component:hover .n4-main_marquee_wrap{animation-play-state:paused}
+      .n4-main_marquee_list{display:flex;flex:none}
+      @keyframes tmarquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+      @media (prefers-reduced-motion:reduce){.n4-main_marquee_wrap{animation:none}}
+    </style>`);
+  }
+}
+
+// (7) ABOUT section — sits in the dark band above the stats block
+{
+  const anchor = $('.n4-parallax_wrap').first();
+  if (anchor.length && !$('#about').length) {
+    anchor.before(`
+<section id="about" style="background:#013126;color:#fff;padding:120px 0">
+  <div style="width:100%;max-width:min(1512px,100% - 91.888px);margin-inline:auto">
+    <div style="display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1fr);gap:64px;align-items:center">
+      <div style="position:relative">
+        <div style="aspect-ratio:4/5;border-radius:24px;overflow:hidden;background:#0d5544">
+          <img src="./media/card-2.jpg" alt="" loading="lazy"
+               style="width:100%;height:100%;object-fit:cover">
+        </div>
+        <div style="position:absolute;inset-block-end:-20px;inset-inline-end:-14px;background:#fff;
+                    color:#013126;border-radius:16px;padding:18px 22px;min-width:168px;
+                    box-shadow:0 14px 34px rgba(0,0,0,.28)">
+          <b style="display:block;font:300 32px/1 Inter,Arial,sans-serif">12+</b>
+          <span style="display:block;margin-top:6px;font:600 12px/1.4 Inter,Arial,sans-serif;
+                       letter-spacing:.05em;text-transform:uppercase;color:#64726f">Years in practice</span>
+        </div>
+      </div>
+      <div>
+        <p style="font:700 11px/1.4 Inter,Arial,sans-serif;letter-spacing:.16em;
+                  text-transform:uppercase;color:#58eda2;margin:0 0 16px">About</p>
+        <h2 style="font:300 clamp(30px,4vw,59.944px)/1.05 Inter,Arial,sans-serif;letter-spacing:-.02em;
+                   margin:0;max-width:18ch">A room where you can finally
+          <em style="font-family:'DM Serif Display',Georgia,serif;font-style:italic;
+                     font-weight:400;color:#58eda2">exhale</em></h2>
+        <p style="margin:24px 0 0;font:400 18px/1.6 Inter,Arial,sans-serif;
+                  color:rgba(255,255,255,.8);max-width:52ch">
+          Most people arrive having already tried to handle it alone for a long time. The work
+          starts by taking that seriously &mdash; understanding what you have been carrying and
+          what it has cost &mdash; before we touch anything else.</p>
+        <p style="margin:18px 0 0;font:400 18px/1.6 Inter,Arial,sans-serif;
+                  color:rgba(255,255,255,.8);max-width:52ch">
+          Sessions are collaborative and direct. You will not be handed a worksheet and sent away,
+          and nothing gets pushed before you are ready for it.</p>
+        <div style="margin-top:26px;display:flex;flex-wrap:wrap;gap:9px">
+          ${['LPC · Georgia','EMDR Certified','IFS Trained','Trauma · CCTP-II']
+            .map(c => `<span style="padding:7px 14px;border-radius:500px;background:rgba(88,237,162,.14);
+              font:700 12px/1.4 Inter,Arial,sans-serif;color:#58eda2;white-space:nowrap">${c}</span>`).join('')}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<style>@media(max-width:991px){#about>div>div{grid-template-columns:1fr!important;gap:48px!important}}</style>`);
+  }
+}
+
 /* ─────────────── 4t. LATE FIXES ─────────────── */
 
 // 1. Rive canvas: the .riv asset is the reference's own file, loaded from their
