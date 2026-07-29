@@ -349,6 +349,124 @@ $('body').append(`<script>
 
 
 
+
+/* ─────────────── 4u. REAL CONTENT PASS ─────────────── */
+
+// 1. hero rotating pills — these live in an inline <script> config, which the
+//    text-node sweep deliberately skips, so they need explicit replacement.
+$('script:not([src])').each((_, el) => {
+  let b = $(el).html() || '';
+  if (!/backgroundColor:\s*"#/.test(b)) return;
+  const PILLS = [
+    ['#028c74', 'Anxiety that finally quiets down'],
+    ['#2469ff', 'Partners who feel heard again'],
+    ['#734dff', 'Trauma processed at your pace'],
+    ['#c07a12', 'Teens who open up in their own time'],
+    ['#00856f', 'A first session within the week'],
+  ];
+  let i = 0;
+  b = b.replace(/backgroundColor:\s*"#[0-9A-Fa-f]{3,8}",\s*text:\s*"[^"]*"/g, () => {
+    const [c, t] = PILLS[i++ % PILLS.length];
+    return `backgroundColor: "${c}", text: "${t}"`;
+  });
+  $(el).html(b);
+});
+
+// 2. stats — realistic practice metrics. These are TEMPLATE values: a practice
+//    must substitute its own before publishing (see README).
+const STATS = [
+  ['78%', 'of clients report meaningful improvement within their first 12 sessions'],
+  ['4 days', 'average wait from first enquiry to a booked appointment'],
+  ['91%', 'continue past the initial course of care'],
+  ['4.9', 'average client rating across Google and Psychology Today'],
+];
+$('.n4-stats_item_number').each((i, el) => { if (STATS[i]) $(el).text(STATS[i][0]); });
+$('.n4-stats_item_test').each((i, el) => { if (STATS[i]) $(el).text(STATS[i][1]); });
+$('.n4-stats_body .n4-stats_text, .n4-stats_body p').first()
+  .text('We review progress openly with every client — these are the practice-wide numbers behind that.');
+
+// 3. audience section lede + realistic audience labels
+$('.n4-industry_body p, .n4-industry_text').first().text(
+  'Care looks different depending on who is in the room. Choose the starting point that fits your situation.');
+const AUDIENCES = ['Individuals', 'Couples', 'Teens & young adults', 'Families', 'Workplace & EAP referrals'];
+$('.n4-industry_links_heading').each((i, el) => { if (AUDIENCES[i]) $(el).text(AUDIENCES[i]); });
+$('.n4-industry_link_item').each((i, item) => {
+  const h = AUDIENCES[i]; if (!h) return;
+  $(item).find('.n4-g_clickable_text').each((_, sr) => $(sr).text(h));
+});
+
+// 4. insurance marquee — text wordmarks in carrier brand colours (the documented
+//    pattern when logo files aren't wired). Drop real SVGs into
+//    _therapy2/media/insurers/ and swap the span for an <img> to upgrade.
+const CARRIERS = [
+  ['Aetna', '#7B2182'], ['Blue Cross Blue Shield', '#005EB8'], ['Cigna', '#036DB7'],
+  ['UnitedHealthcare', '#002677'], ['Humana', '#5B8F22'], ['Optum', '#FF612B'],
+  ['Anthem', '#0079C1'], ['Oscar', '#F05C5C'], ['Out-of-network', '#028c74'],
+  ['HSA / FSA eligible', '#028c74'], ['Sliding scale', '#028c74'],
+];
+$('.n4-marquee_logo_wrap').each((i, el) => {
+  const [name, col] = CARRIERS[i % CARRIERS.length];
+  // Brand colour on a WHITE CHIP — navy marks (UHC #002677, BCBS, Anthem) are
+  // unreadable directly on the dark green section. This is also how carriers are
+  // conventionally displayed. Check contrast on the real background, not in isolation.
+  $(el).empty().append(
+    `<span style="display:inline-flex;align-items:center;justify-content:center;` +
+    `height:46px;padding:0 20px;border-radius:8px;background:#fff;` +
+    `font:700 15px/1.15 Inter,Arial,sans-serif;letter-spacing:.01em;color:${col};` +
+    `white-space:nowrap;box-shadow:0 1px 3px rgba(0,0,0,.14)">${name}</span>`);
+});
+$('.n4-g_subtitle_text').first().text('Insurance accepted');
+
+// 5. client story — anonymised example. Counselling bodies (ACA/APA) discourage
+//    soliciting testimonials from current clients; publish only with written,
+//    informed consent and keep identities non-identifying.
+const STORIES = [
+  ['Client, name withheld', 'Individual therapy · 8 months',
+   'I had put off calling for about two years. The first session was not what I expected — nobody asked me to relive anything, we just worked out what I actually wanted to change. About four months in I noticed I had stopped rehearsing conversations in my head before work.'],
+  ['Client, name withheld', 'Couples therapy · 6 months',
+   'We came in mostly to decide whether to stay together. What helped was being slowed down enough to hear what the other one was actually asking for underneath the argument. We still disagree, we just do not end up in the same place every time.'],
+  ['Client, name withheld', 'Trauma & EMDR · 11 months',
+   'The pacing mattered more than anything. Nothing got pushed before I was ready, and the sessions where we just built stability turned out to be the ones that made the rest possible.'],
+];
+$('.n4-stories_tabs_bio_text').each((i, el) => {
+  const idx = Math.floor(i / 2), part = i % 2, st = STORIES[idx];
+  if (st) $(el).text(part === 0 ? st[0] : st[1]);
+});
+$('.n4-stories_tabs_quote').each((i, el) => {
+  if (STORIES[i]) $(el).text(STORIES[i][2]);
+});
+
+// care-card descriptions (the 3 self-pay options) + features lede
+const CARE_TEXT = [
+  'Small, facilitated groups for anxiety, grief and life transitions. Six to eight people, closed cohorts, eight weeks.',
+  'Psychiatric assessment and ongoing prescribing, coordinated with your therapist so the two halves of care actually talk.',
+  'Condensed multi-day work for trauma and couples, for people who cannot commit to a weekly slot.',
+];
+$('.n4-services_card_text').each((i, el) => {
+  const t = ($(el).text() || '').trim();
+  if (!/^(Label|Content slot)/.test(t)) return;
+  $(el).text(CARE_TEXT.shift() || 'Additional care option.');
+});
+$('.n4-features_text').first().text(
+  'One team, one record, and clinicians who stay with you rather than a rotating directory.');
+
+// 6. feature card inner boxes — therapist-facing specialisms
+$('.n4-featured_card_box_text').each((i, el) => {
+  $(el).text(['EMDR certified', 'Gottman Level 2', 'Play therapy'][i] || 'Licensed clinician');
+});
+
+// 7. "Our Clinicians" gets the hiring tag
+$('.n4-footer_content_link').each((_, el) => {
+  if (/Our Clinicians/i.test($(el).text())) {
+    if (!$(el).find('.n4-tag_text').length) {
+      $(el).find('.n4-footer_link_text').first()
+        .after('<span class="n4-tag_text" style="margin-left:8px;padding:2px 7px;border-radius:4px;' +
+               'background:#58eda2;color:#013126;font:700 10px/1.4 Inter,Arial,sans-serif;' +
+               'letter-spacing:.08em">HIRING</span>');
+    }
+  }
+});
+
 /* ─────────────── 4v. CONTEXTUAL LABEL FILL ───────────────
    Remaining "Label" slots are buttons/stat captions my arrays didn't reach.
    Fill by context rather than blanket text. */
