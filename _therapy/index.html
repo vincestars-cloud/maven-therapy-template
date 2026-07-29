@@ -1,0 +1,851 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Therapy &amp; Counseling — practice template</title>
+<meta name="description" content="Therapy and counseling practice landing page template.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+/* ===========================================================================
+   THERAPY / COUNSELING TEMPLATE
+   Design system measured from a live Webflow reference (see ../_clone2 +
+   DESIGN-SYSTEM.md). Structure carried over: panel-inset layout, 158/79 section
+   rhythm, modality sub-colour system, sticky-parallax stats with container
+   queries, root-font-size scaling, real 991/767/479 breakpoints.
+   All copy here is original template copy. Swap via the CONFIG block in JS.
+   =========================================================================== */
+:root{
+  /* --- root font scales per viewport (measured behaviour) --- */
+  --root-fs:15.8848px; --root-lh:23.8272px;
+
+  /* --- palette --- */
+  --natural:#ede9e3;
+  --natural-2:#e7e0d7;
+  --deepest:#013126;
+  --deep:#035748;
+  --green:#028c74;
+  --mint:#58eda2;
+  --fresh:#71d1b5;
+  --light-green:#ddf0e2;
+  --muted:#64726f;
+  --slate:#263633;
+  --white:#fff;
+
+  /* --- type ladder (measured curve) --- */
+  --fs-h1:73.7136px; --lh-h1:74px;
+  --fs-h2:59.944px;  --lh-h2:60px;
+  --fs-h3:23.6544px; --lh-h3:28px;
+  --ls-tight:-.02em;
+
+  /* --- spacing (measured curve) --- */
+  --sec:157.938px; --sec-sm:78.969px;
+  --gap-grid:23.2032px; --gap-flow:46.9728px;
+  --gap-stats:142.406px; --pad-stats:118.406px;
+  --pad-card:31.4336px;
+  --gutter:91.888px;
+
+  --r-card:8px; --r-panel:24px;
+
+  /* --- TWO DECISIONS THAT DIFFER FROM THE style-9 APPROVED THEME ---
+     Reference uses light display weight + full-pill CTAs.
+     Approved style-9 uses Inter 900 + 8px radius ("pills read pharma-SaaS").
+     Flip these two lines to switch. */
+  --display-weight:300;      /* approved style-9 alternative: 900 */
+  --r-btn:500px;             /* approved style-9 alternative: 8px */
+
+  --font:'Inter',-apple-system,'Helvetica Neue',Arial,sans-serif;
+  --serif:'DM Serif Display',Georgia,serif;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;font-size:var(--root-fs);scroll-behavior:smooth}
+body{margin:0;background:var(--natural);color:var(--deepest);font-family:var(--font);
+     font-size:var(--root-fs);line-height:var(--root-lh);letter-spacing:var(--ls-tight);
+     -webkit-font-smoothing:antialiased}
+img{display:block;max-width:100%}
+svg{fill:none;stroke-linecap:round;stroke-linejoin:round}
+a{color:inherit;text-decoration:none}
+h1,h2,h3,h4,p{margin:0}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+.wrap{display:flex;flex-direction:column;overflow-x:clip}
+.container{width:100%;max-width:min(1512px,100% - var(--gutter));margin-inline:auto}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* ---------- buttons ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:48px;
+     padding-inline:28px;border-radius:var(--r-btn);font-size:16px;font-weight:600;line-height:1;
+     transition:background .2s,color .2s,border-color .2s}
+.btn-primary{background:var(--green);color:var(--white)}
+.btn-primary:hover{background:var(--mint);color:var(--deepest)}
+.btn-ghost{border:1px solid rgba(255,255,255,.55);color:var(--white)}
+.btn-ghost:hover{border-color:var(--mint);color:var(--mint)}
+.btn-dark{border:1px solid var(--deepest);color:var(--deepest)}
+.btn-dark:hover{background:var(--deepest);color:var(--white)}
+.btn-sm{height:40px;padding-inline:20px;font-size:15px}
+
+/* ---------- announcement bar ---------- */
+.annbar{position:fixed;inset-block-start:0;inset-inline:0;z-index:1000;background:var(--deep);
+        color:var(--white);padding:11px 56px 11px 20px;box-shadow:rgba(38,54,51,.12) 0 0 4px 4px}
+.annbar-in{max-width:1200px;margin-inline:auto;text-align:center;font-size:15px}
+.annbar a{text-decoration:underline;padding-inline-start:.35em;color:var(--mint)}
+.annbar-x{position:absolute;inset-inline-end:14px;inset-block-start:50%;transform:translateY(-50%);
+          width:44px;height:44px;display:grid;place-items:center;color:var(--white)}
+.annbar.hide{display:none}
+
+/* ---------- nav ---------- */
+.navwrap{position:absolute;inset-inline:0;inset-block-start:54px;z-index:100;padding-inline:12px}
+.nav{width:100%;max-width:1270px;height:64px;margin-inline:auto;padding-inline:45px}
+.nav-shell{height:64px;max-width:1180px;margin-inline:auto;padding-inline:15px;
+           background:var(--white);border-radius:4px;box-shadow:rgba(0,0,0,.2) 0 0 4px 0}
+.nav-in{display:flex;align-items:center;justify-content:space-between;height:100%;
+        max-width:1150px;margin-inline:auto}
+.brand{display:flex;align-items:center;gap:9px;font-size:19px;font-weight:700;
+       letter-spacing:.02em;color:var(--deepest)}
+.brand-mark{width:30px;height:30px;border-radius:50%;background:var(--green);flex:none;
+            display:grid;place-items:center;color:#fff;font-size:13px;font-weight:700;letter-spacing:0}
+.nav-menu{display:flex;align-items:center}
+.nav-link{display:inline-flex;align-items:center;height:64px;padding:20px 18px;font-size:16px;
+          font-weight:600;line-height:24px;color:var(--slate);position:relative}
+.nav-link:hover::before{content:"";position:absolute;inset-inline:18px;inset-block-end:14px;
+          height:2px;background:var(--green)}
+.nav-cta{display:flex;align-items:center;gap:10px}
+.burger{display:none;width:44px;height:44px;padding:11px}
+.burger span{display:block;height:2px;background:var(--slate);margin-block:3px;transition:transform .2s,opacity .2s}
+.burger[aria-expanded="true"] span:nth-child(1){transform:translateY(5px) rotate(45deg)}
+.burger[aria-expanded="true"] span:nth-child(2){opacity:0}
+.burger[aria-expanded="true"] span:nth-child(3){transform:translateY(-5px) rotate(-45deg)}
+
+/* ---------- hero (panel-inset, fills viewport, ticker peeks below fold) ---------- */
+.hero{position:relative;display:flex;min-height:100svh;padding:54px 12px 12px;
+      background:var(--deepest)}
+.hero-panel{position:relative;flex:1;border-radius:var(--r-panel);overflow:clip;
+            display:flex;align-items:center}
+.hero-bg{position:absolute;inset:0;background-color:#013126;
+  background-image:
+    radial-gradient(60% 55% at 18% 22%,rgba(88,237,162,.16),transparent 60%),
+    radial-gradient(50% 50% at 82% 78%,rgba(113,209,181,.14),transparent 60%),
+    linear-gradient(150deg,#013126 0%,#02463a 40%,#035748 100%)}
+.hero-photo{position:absolute;inset-block:0;inset-inline-end:0;width:46%;
+            background:linear-gradient(135deg,#0a4436,#0d5544);
+            -webkit-mask-image:linear-gradient(90deg,transparent,#000 22%);
+            mask-image:linear-gradient(90deg,transparent,#000 22%)}
+.hero-photo img{width:100%;height:100%;object-fit:cover;object-position:top center}
+.hero-fade{position:absolute;inset:0;
+  background:linear-gradient(90deg,rgba(1,20,14,.82) 0%,rgba(1,20,14,.42) 52%,transparent 78%),
+             linear-gradient(to top,rgba(1,20,14,.45),transparent 42%)}
+.hero-in{position:relative;z-index:2;width:100%;
+         max-width:min(1512px,100% - var(--gutter));margin-inline:auto;
+         padding-block:96px 120px;color:var(--white)}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:9px;padding:7px 15px;border-radius:500px;
+              background:rgba(88,237,162,.14);border:1px solid rgba(88,237,162,.32);
+              color:var(--mint);font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase}
+.hero-eyebrow i{width:7px;height:7px;border-radius:50%;background:var(--mint);display:block}
+.hero h1{margin-block-start:26px;font-size:var(--fs-h1);font-weight:var(--display-weight);
+         line-height:var(--lh-h1);letter-spacing:var(--ls-tight);max-width:15ch}
+.hero h1 em{font-family:var(--serif);font-style:italic;font-weight:400;color:var(--mint)}
+.hero-sub{margin-block-start:22px;font-size:18px;font-weight:400;max-width:48ch;color:rgba(255,255,255,.86)}
+.hero-actions{margin-block-start:34px;display:flex;gap:12px;flex-wrap:wrap}
+.hero-note{margin-block-start:20px;font-size:14px;color:rgba(255,255,255,.62)}
+
+/* ---------- credential ticker (ONE bar only — never stacked with insurance) ---------- */
+.ticker{background:var(--natural-2);padding-block:26px;overflow:hidden;border-block-end:1px solid rgba(1,49,38,.08)}
+.ticker-label{text-align:center;font-size:10px;font-weight:700;letter-spacing:.16em;
+              text-transform:uppercase;color:var(--green);margin-block-end:16px}
+.ticker-mask{overflow:hidden;mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent);
+             -webkit-mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent)}
+.ticker-track{display:flex;width:max-content;animation:tick 34s linear infinite}
+.ticker-mask:hover .ticker-track{animation-play-state:paused}
+.pill{flex:none;display:inline-flex;align-items:center;height:40px;padding-inline:22px;margin-inline:7px;
+      border-radius:500px;background:var(--white);border:1px solid rgba(1,49,38,.1);
+      font-size:12px;font-weight:700;letter-spacing:.04em;color:var(--deepest);white-space:nowrap}
+@keyframes tick{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* ---------- section furniture ---------- */
+.sec{position:relative}
+.sec-space{height:var(--sec)}
+.sec-space.sm{height:var(--sec-sm)}
+.sec-dark{background:var(--deepest);color:var(--white)}
+.eyebrow{font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--green)}
+.sec-dark .eyebrow{color:var(--mint)}
+.h2{margin-block-start:16px;font-size:var(--fs-h2);font-weight:var(--display-weight);
+    line-height:var(--lh-h2);letter-spacing:var(--ls-tight);max-width:19ch}
+.h2 em{font-family:var(--serif);font-style:italic;font-weight:400;color:var(--green)}
+.sec-dark .h2 em{color:var(--mint)}
+.lede{margin-block-start:22px;font-size:18px;max-width:52ch;color:var(--muted)}
+.sec-dark .lede{color:rgba(255,255,255,.8)}
+
+/* ---------- modality cards (sub-colour system) ---------- */
+.mod-grid{margin-block-start:56px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--gap-grid)}
+.mod{position:relative;min-height:430px;border-radius:var(--r-panel);overflow:hidden;
+     background:var(--m-light);border:1px solid rgba(1,49,38,.07);
+     display:flex;flex-direction:column;cursor:pointer;text-align:start;
+     transition:transform .2s ease,box-shadow .2s ease}
+.mod:hover{transform:translateY(-3px);box-shadow:0 14px 34px rgba(1,49,38,.13)}
+.mod:focus-visible{outline:3px solid var(--m-vibrant);outline-offset:3px}
+.mod-head{background:var(--m-vibrant);color:#fff;padding:22px 24px;display:flex;align-items:center;gap:11px}
+.mod-head svg{width:22px;height:22px;stroke:currentColor;stroke-width:1.6;flex:none}
+.mod-head span{font-size:11px;font-weight:700;letter-spacing:.13em;text-transform:uppercase}
+.mod-body{padding:26px 24px 24px;display:flex;flex-direction:column;flex:1}
+.mod h3{font-size:var(--fs-h3);font-weight:var(--display-weight);line-height:var(--lh-h3);color:var(--deepest)}
+.mod p{margin-block-start:12px;font-size:15px;color:var(--muted);flex:1}
+.mod-more{margin-block-start:18px;font-size:12px;font-weight:700;letter-spacing:.05em;
+          color:var(--m-vibrant);opacity:.72;transition:opacity .2s}
+.mod:hover .mod-more{opacity:1}
+.m-anx{--m-vibrant:#008799;--m-light:#e4fcff}
+.m-cpl{--m-vibrant:#2469ff;--m-light:#ddeefe}
+.m-tra{--m-vibrant:#734dff;--m-light:#ede9fc}
+.m-gri{--m-vibrant:#c07a12;--m-light:#fff2d1}
+
+/* ---------- how it works ---------- */
+.steps{margin-block-start:56px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--gap-grid)}
+.step{padding-block-start:26px;border-block-start:2px solid rgba(255,255,255,.22)}
+.step b{display:block;font-family:var(--serif);font-size:40px;font-weight:400;color:var(--mint);line-height:1}
+.step h3{margin-block-start:14px;font-size:var(--fs-h3);font-weight:var(--display-weight);line-height:var(--lh-h3)}
+.step p{margin-block-start:10px;font-size:16px;color:rgba(255,255,255,.76)}
+
+/* ---------- about ---------- */
+.about{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1fr);
+       gap:var(--gap-flow);align-items:center}
+.about-media{position:relative}
+.about-photo{aspect-ratio:4/5;border-radius:var(--r-panel);overflow:hidden;
+             background:linear-gradient(140deg,#0d5544,#128a6f)}
+.about-photo img{width:100%;height:100%;object-fit:cover;object-position:top center}
+.about-chip{position:absolute;inset-block-end:-22px;inset-inline-end:-16px;background:var(--white);
+            border-radius:16px;padding:18px 22px;box-shadow:0 14px 34px rgba(1,49,38,.16);
+            border:1px solid rgba(1,49,38,.07);min-width:172px}
+.about-chip b{display:block;font-size:32px;font-weight:var(--display-weight);color:var(--deepest);line-height:1}
+.about-chip span{display:block;margin-block-start:6px;font-size:12px;font-weight:600;
+                 letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.creds{margin-block-start:26px;display:flex;flex-wrap:wrap;gap:9px}
+.cred{padding:7px 14px;border-radius:500px;background:var(--light-green);
+      font-size:12px;font-weight:700;color:var(--deep);white-space:nowrap}
+.bio-link{display:inline-block;margin-block-start:22px;font-size:13px;font-weight:700;
+          border-block-end:1px solid currentColor;opacity:.78}
+.bio-link:hover{opacity:1}
+
+/* ---------- stats (sticky parallax + container queries) ---------- */
+.parallax{position:relative}
+.parallax-sticky{position:sticky;inset-block-start:0;height:620px;overflow:clip}
+.parallax-vis{position:absolute;inset:0;
+  background:radial-gradient(58% 60% at 30% 35%,rgba(88,237,162,.2),transparent 62%),
+             linear-gradient(160deg,#013126,#035748 62%,#02745f)}
+.parallax-over{position:relative;z-index:2}
+.stats{background:var(--natural);border-radius:var(--r-panel) var(--r-panel) 0 0}
+.stats-in{container-type:inline-size;container-name:stats;
+          display:flex;flex-direction:column;gap:var(--gap-stats);padding-block:var(--pad-stats)}
+.stats-body{max-width:579px}
+.stats-grid{display:grid;grid-template-columns:repeat(var(--cols,4),minmax(0,1fr));gap:var(--gap-grid)}
+.stat{padding-block-start:24px;border-block-start:1px solid rgba(1,49,38,.16)}
+.stat b{display:block;font-size:44px;font-weight:var(--display-weight);line-height:1;color:var(--deepest)}
+.stat span{display:block;margin-block-start:12px;font-size:15px;color:var(--muted)}
+@container stats (width < 70em){ .stats-grid{--cols:2} }
+@container stats (width < 40em){ .stats-grid{--cols:1} }
+
+/* ---------- testimonials: authentic Google review cards on white ---------- */
+.reviews{background:var(--white);padding-block:var(--sec-sm)}
+.rev-banner{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;
+            margin-block-end:44px}
+.rev-score{font-size:38px;font-weight:700;color:var(--deepest);line-height:1}
+.stars{display:flex;gap:3px}
+.stars svg{width:19px;height:19px;fill:#FBBC04;stroke:none}
+.rev-meta{font-size:14px;color:var(--muted)}
+.rev-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--gap-grid)}
+.rev{background:#fff;border:1px solid #dadce0;border-radius:12px;padding:24px;
+     display:flex;flex-direction:column;gap:14px}
+.rev-top{display:flex;align-items:center;gap:12px}
+.avatar{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;
+        color:#fff;font-weight:700;font-size:15px;flex:none}
+.av-b{background:#4285F4}.av-g{background:#34A853}.av-r{background:#EA4335}
+.av-y{background:#FBBC04;color:#3c4043}.av-p{background:#9334EA}.av-t{background:#00897B}
+.rev-name{font-size:15px;font-weight:600;color:#202124}
+.rev-date{font-size:12px;color:#5f6368}
+.rev p{font-size:15px;color:#3c4043;line-height:1.55;flex:1}
+.rev-foot{display:flex;align-items:center;gap:7px;font-size:12px;color:#5f6368}
+.g-logo{width:17px;height:17px;flex:none}
+
+/* ---------- final CTA ---------- */
+.cta{background:var(--natural)}
+.cta-panel{background:var(--deepest);color:var(--white);border-radius:var(--r-panel);
+           padding:76px 56px;display:flex;align-items:center;justify-content:space-between;
+           gap:44px;flex-wrap:wrap}
+.cta-panel h2{font-size:var(--fs-h2);font-weight:var(--display-weight);line-height:var(--lh-h2);
+              letter-spacing:var(--ls-tight);max-width:16ch}
+.cta-panel h2 em{font-family:var(--serif);font-style:italic;font-weight:400;color:var(--mint)}
+.cta-panel p{margin-block-start:14px;font-size:17px;color:rgba(255,255,255,.78);max-width:44ch}
+
+/* ---------- footer ---------- */
+.footer{background:var(--natural);padding-block-start:48px}
+.footer-in{background:var(--deepest);color:var(--white);border-radius:var(--r-panel) var(--r-panel) 0 0;
+           padding:52px 56px 40px}
+.footer-top{display:flex;justify-content:space-between;gap:var(--gap-flow);flex-wrap:wrap}
+.footer-brand{max-width:300px}
+.footer-brand .brand{color:#fff}
+.footer-brand p{margin-block-start:16px;font-size:15px;color:rgba(255,255,255,.66)}
+.footer-col h4{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+               color:var(--mint);margin-block-end:14px}
+.footer-col a,.footer-col p{display:block;padding-block:5px;font-size:15px;color:rgba(255,255,255,.78)}
+.footer-col a:hover{color:var(--mint)}
+.crisis{margin-block-start:40px;padding:18px 22px;border-radius:12px;
+        background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);
+        font-size:14px;color:rgba(255,255,255,.86)}
+.crisis b{color:var(--mint)}
+.footer-legal{margin-block-start:26px;padding-block-start:22px;border-block-start:1px solid rgba(255,255,255,.18);
+              display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;
+              font-size:13px;color:rgba(255,255,255,.55)}
+
+/* ---------- modal ---------- */
+.modal{position:fixed;inset:0;z-index:9001;background:rgba(1,20,14,.62);
+       display:none;align-items:center;justify-content:center;padding:24px}
+.modal.open{display:flex}
+.modal-card{background:#fff;border-radius:20px;max-width:620px;width:100%;
+            max-height:88vh;overflow:hidden;display:flex;flex-direction:column}
+.modal-head{padding:26px 28px;color:#fff;background:var(--m-vibrant,var(--green));
+            display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
+.modal-head h3{font-size:26px;font-weight:var(--display-weight);line-height:1.2}
+.modal-head .tag{display:block;margin-block-end:8px;font-size:11px;font-weight:700;
+                 letter-spacing:.13em;text-transform:uppercase;opacity:.9}
+.modal-x{width:36px;height:36px;display:grid;place-items:center;border-radius:50%;
+         background:rgba(255,255,255,.18);color:#fff;flex:none}
+.modal-body{padding:26px 28px 28px;overflow-y:auto}
+.modal-body p{font-size:16px;color:var(--muted);line-height:1.6}
+.modal-body h4{margin-block-start:22px;font-size:13px;font-weight:700;letter-spacing:.06em;
+               text-transform:uppercase;color:var(--deepest)}
+.modal-body ul{margin:12px 0 0;padding-inline-start:20px}
+.modal-body li{font-size:15px;color:var(--muted);margin-block-end:8px;line-height:1.5}
+.modal-foot{margin-block-start:26px;display:flex;gap:12px;flex-wrap:wrap}
+
+/* ===========================================================================
+   BREAKPOINTS — 991 / 767 / 479, with the measured root-font + spacing curve
+   =========================================================================== */
+@media (max-width:991px){
+  :root{
+    --root-fs:14.6752px; --root-lh:22.0128px;
+    --fs-h1:52.0752px; --lh-h1:52px;
+    --fs-h2:40.7248px; --lh-h2:41px;
+    --fs-h3:22px;      --lh-h3:28px;
+    --sec:138.719px;   --sec-sm:69.359px;
+    --gap-grid:16.0128px; --gap-flow:37.3632px;
+    --gap-stats:128.026px; --pad-stats:104.026px;
+    --pad-card:26.6624px; --gutter:53.4496px;
+  }
+  .navwrap{inset-block-start:48px;padding-inline:0}
+  .nav{max-width:none;padding-inline:0;height:58px}
+  .nav-shell{max-width:none;height:58px;border-radius:0;padding-inline:20px}
+  .nav-in{max-width:none}
+  .burger{display:block}
+  .nav-menu{position:absolute;inset-block-start:58px;inset-inline:0;flex-direction:column;
+            align-items:stretch;background:#fff;box-shadow:rgba(0,0,0,.18) 0 8px 18px;
+            padding:8px;max-height:80vh;overflow-y:auto;display:none}
+  .nav-menu.open{display:flex}
+  .nav-link{height:auto;padding:15px 16px;border-block-end:1px solid #f1f1f1}
+  .nav-link:hover::before{display:none}
+  .nav-cta .btn-ghost,.nav-cta .btn-dark{display:none}
+  .hero-photo{width:100%;-webkit-mask-image:none;mask-image:none;opacity:.42}
+  .hero-fade{background:linear-gradient(to top,rgba(1,20,14,.86),rgba(1,20,14,.5) 55%,rgba(1,20,14,.35))}
+  .mod-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .steps{grid-template-columns:1fr}
+  .about{grid-template-columns:1fr;gap:56px}
+  .about-chip{inset-inline-end:16px}
+  .rev-grid{grid-template-columns:1fr}
+  .cta-panel{padding:52px 32px}
+  .footer-in{padding:40px 28px 32px}
+}
+@media (max-width:767px){
+  .hero{min-height:auto;padding:54px 8px 8px}
+  .hero-in{padding-block:80px 88px}
+}
+@media (max-width:479px){
+  :root{
+    --root-fs:14px; --root-lh:21px;
+    --fs-h1:40px; --lh-h1:44px;
+    --fs-h2:30px; --lh-h2:36px;
+    --fs-h3:20px; --lh-h3:26px;
+    --sec:128px;  --sec-sm:64px;
+    --gap-grid:12px; --gap-flow:40px;
+    --gap-stats:32px; --pad-stats:32px;
+    --pad-card:24px; --gutter:32px;
+  }
+  .navwrap{inset-block-start:44px}
+  .nav,.nav-shell{height:46px}
+  .nav-menu{inset-block-start:46px}
+  .mod-grid{grid-template-columns:1fr}
+  .hero-actions{flex-direction:column;align-items:stretch}
+  .hero-actions .btn{width:100%}
+  .cta-panel{padding:40px 22px}
+  .cta-panel .btn{width:100%}
+  .about-chip{position:static;margin-block-start:16px;inset:auto}
+}
+/* Client pages ship without entrance animation — continuous tickers stay. */
+@media (prefers-reduced-motion:reduce){ .ticker-track{animation:none} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- announcement bar -->
+  <div class="annbar" id="annbar">
+    <div class="annbar-in" id="annText">
+      Now accepting new clients — virtual &amp; in-person.
+      <a href="#contact">Book a free 15-minute consult</a>
+    </div>
+    <button class="annbar-x" id="annX" aria-label="Dismiss announcement">
+      <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+  </div>
+
+  <!-- hero -->
+  <header class="hero">
+    <div class="hero-panel">
+      <div class="hero-bg"></div>
+      <div class="hero-photo"><img src="" alt="" id="heroPhoto" hidden></div>
+      <div class="hero-fade"></div>
+
+      <div class="navwrap">
+        <nav class="nav">
+          <div class="nav-shell">
+            <div class="nav-in">
+              <a class="brand" href="#top">
+                <span class="brand-mark" id="brandMark">RC</span><span id="brandName">Riverstone Counseling</span>
+              </a>
+              <div class="nav-menu" id="navMenu">
+                <a class="nav-link" href="#approach">Approach</a>
+                <a class="nav-link" href="#services">Services</a>
+                <a class="nav-link" href="#about">About</a>
+                <a class="nav-link" href="#reviews">Reviews</a>
+                <a class="nav-link" href="#contact">Contact</a>
+              </div>
+              <div class="nav-cta">
+                <a class="btn btn-dark btn-sm" href="tel:+15550000000" id="navPhone">Call</a>
+                <a class="btn btn-primary btn-sm" href="#contact">Book a consult</a>
+                <button class="burger" id="burger" aria-label="Menu" aria-expanded="false" aria-controls="navMenu">
+                  <span></span><span></span><span></span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </nav>
+      </div>
+
+      <div class="hero-in">
+        <span class="hero-eyebrow"><i></i>Accepting new clients</span>
+        <h1>Therapy that meets you <em>where you are</em></h1>
+        <p class="hero-sub">Evidence-based counseling for anxiety, trauma, grief and relationships —
+           with a therapist who listens first and paces the work to you.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#contact">Book a free consult</a>
+          <a class="btn btn-ghost" href="#services">Explore services</a>
+        </div>
+        <p class="hero-note">Virtual and in-person · Most major insurance accepted · Typically 3–5 days to first session</p>
+      </div>
+    </div>
+  </header>
+
+  <!-- credential ticker (one bar only — never stacked with an insurance bar) -->
+  <section class="ticker" aria-label="Credentials">
+    <p class="ticker-label">Licensed &amp; certified</p>
+    <div class="ticker-mask">
+      <div class="ticker-track" id="tickTrack">
+        <span class="pill">LPC · Licensed Professional Counselor</span>
+        <span class="pill">LCSW</span>
+        <span class="pill">EMDR Certified</span>
+        <span class="pill">IFS Trained</span>
+        <span class="pill">CCTP-II Trauma</span>
+        <span class="pill">Perinatal Mental Health</span>
+        <span class="pill">Gottman Level 2</span>
+        <span class="pill">CBT · DBT</span>
+        <span class="pill">Certified Clinical Supervisor</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- services / modalities -->
+  <section class="sec sec-dark" id="services">
+    <div class="sec-space"></div>
+    <div class="container">
+      <p class="eyebrow">What we help with</p>
+      <h2 class="h2">Care shaped around <em>your situation</em></h2>
+      <p class="lede">Every person arrives with a different history and a different goal.
+         These are the areas we work in most — select any one to see how the work actually runs.</p>
+
+      <div class="mod-grid">
+        <button class="mod m-anx" data-svc="anxiety">
+          <div class="mod-head">
+            <svg viewBox="0 0 24 24"><path d="M12 22s8-4.5 8-11V5l-8-3-8 3v6c0 6.5 8 11 8 11Z"/></svg>
+            <span>Individual</span>
+          </div>
+          <div class="mod-body">
+            <h3>Anxiety &amp; Stress</h3>
+            <p>For the racing mind, the tight chest, and the sense that you are always bracing for the next thing.</p>
+            <span class="mod-more">Learn more &rarr;</span>
+          </div>
+        </button>
+
+        <button class="mod m-cpl" data-svc="couples">
+          <div class="mod-head">
+            <svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/></svg>
+            <span>Relationship</span>
+          </div>
+          <div class="mod-body">
+            <h3>Couples Therapy</h3>
+            <p>For partners stuck in the same argument, or living politely alongside each other without much left.</p>
+            <span class="mod-more">Learn more &rarr;</span>
+          </div>
+        </button>
+
+        <button class="mod m-tra" data-svc="trauma">
+          <div class="mod-head">
+            <svg viewBox="0 0 24 24"><path d="M12 2v6m0 8v6M2 12h6m8 0h6"/><circle cx="12" cy="12" r="3"/></svg>
+            <span>Trauma</span>
+          </div>
+          <div class="mod-body">
+            <h3>Trauma &amp; EMDR</h3>
+            <p>For experiences your body still reacts to, even when the thinking part of you knows it is over.</p>
+            <span class="mod-more">Learn more &rarr;</span>
+          </div>
+        </button>
+
+        <button class="mod m-gri" data-svc="grief">
+          <div class="mod-head">
+            <svg viewBox="0 0 24 24"><path d="M12 21s-7-4.35-7-10a4 4 0 0 1 7-2.65A4 4 0 0 1 19 11c0 5.65-7 10-7 10Z"/></svg>
+            <span>Life change</span>
+          </div>
+          <div class="mod-body">
+            <h3>Grief &amp; Transitions</h3>
+            <p>For loss, divorce, a diagnosis, or a move that rearranged a life you had already planned.</p>
+            <span class="mod-more">Learn more &rarr;</span>
+          </div>
+        </button>
+      </div>
+    </div>
+    <div class="sec-space sm"></div>
+  </section>
+
+  <!-- how it works -->
+  <section class="sec sec-dark" id="approach">
+    <div class="container">
+      <p class="eyebrow">How it works</p>
+      <h2 class="h2">Three steps, <em>no pressure</em></h2>
+      <div class="steps">
+        <div class="step"><b>01</b><h3>A free 15-minute call</h3>
+          <p>We talk about what brought you here and whether this is the right fit. No intake forms, no commitment.</p></div>
+        <div class="step"><b>02</b><h3>Your first session</h3>
+          <p>We map what you want to be different and agree on a pace. You set what gets discussed and when.</p></div>
+        <div class="step"><b>03</b><h3>Ongoing work</h3>
+          <p>Usually weekly to start, moving to every other week as things settle. We review progress openly.</p></div>
+      </div>
+    </div>
+    <div class="sec-space"></div>
+  </section>
+
+  <!-- about -->
+  <section class="sec" id="about">
+    <div class="sec-space sm"></div>
+    <div class="container">
+      <div class="about">
+        <div class="about-media">
+          <div class="about-photo"><img src="" alt="" id="aboutPhoto" hidden></div>
+          <div class="about-chip"><b>12+</b><span>Years in practice</span></div>
+        </div>
+        <div>
+          <p class="eyebrow">About</p>
+          <h2 class="h2">A room where you can finally <em>exhale</em></h2>
+          <p class="lede">Most people arrive having already tried to handle it alone for a long time.
+             The work starts by taking that seriously — understanding what you have been carrying and
+             what it has cost — before we touch anything else.</p>
+          <p class="lede">Sessions are collaborative and direct. You will not be handed a worksheet and
+             sent away, and nothing gets pushed before you are ready for it.</p>
+          <div class="creds">
+            <span class="cred">LPC · Georgia</span>
+            <span class="cred">EMDR Certified</span>
+            <span class="cred">IFS Trained</span>
+            <span class="cred">Trauma · CCTP-II</span>
+          </div>
+          <a class="bio-link" href="#" id="bioLink">Read the full bio &rarr;</a>
+        </div>
+      </div>
+    </div>
+    <div class="sec-space sm"></div>
+  </section>
+
+  <!-- stats over sticky parallax -->
+  <section class="parallax">
+    <div class="parallax-sticky"><div class="parallax-vis"></div></div>
+    <div class="parallax-over">
+      <div class="stats">
+        <div class="container">
+          <div class="stats-in">
+            <div class="stats-body">
+              <p class="eyebrow">Outcomes</p>
+              <h2 class="h2">Progress you can actually <em>feel</em></h2>
+              <p class="lede">Figures below are placeholders — replace with your own practice
+                 outcomes or remove the block entirely. Never publish numbers you cannot support.</p>
+            </div>
+            <div class="stats-grid">
+              <div class="stat"><b>00%</b><span>Report meaningful improvement by session 12</span></div>
+              <div class="stat"><b>00</b><span>Days, on average, to a first appointment</span></div>
+              <div class="stat"><b>00%</b><span>Continue past the initial course of care</span></div>
+              <div class="stat"><b>0.0</b><span>Average client rating across platforms</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- reviews -->
+  <section class="reviews" id="reviews">
+    <div class="container">
+      <div class="rev-banner">
+        <svg class="g-logo" style="width:32px;height:32px" viewBox="0 0 48 48">
+          <path fill="#EA4335" stroke="none" d="M24 9.5c3.5 0 6.6 1.2 9 3.6l6.7-6.7C35.6 2.6 30.2.5 24 .5 14.6.5 6.5 5.8 2.6 13.5l7.8 6.1C12.3 13.7 17.7 9.5 24 9.5Z"/>
+          <path fill="#4285F4" stroke="none" d="M46.5 24.5c0-1.6-.15-3.2-.45-4.7H24v9h12.7c-.55 3-2.2 5.5-4.7 7.2l7.6 5.9c4.4-4.1 6.9-10.1 6.9-17.4Z"/>
+          <path fill="#FBBC05" stroke="none" d="M10.4 28.4A14.6 14.6 0 0 1 9.6 24c0-1.5.3-3 .8-4.4l-7.8-6.1A23.5 23.5 0 0 0 .5 24c0 3.8.9 7.4 2.1 10.5l7.8-6.1Z"/>
+          <path fill="#34A853" stroke="none" d="M24 47.5c6.2 0 11.5-2 15.3-5.6l-7.6-5.9c-2.1 1.4-4.8 2.3-7.7 2.3-6.3 0-11.7-4.2-13.6-10.1l-7.8 6.1C6.5 42.2 14.6 47.5 24 47.5Z"/>
+        </svg>
+        <span class="rev-score">5.0</span>
+        <span class="stars">
+          <svg viewBox="0 0 24 24"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1Z"/></svg>
+          <svg viewBox="0 0 24 24"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1Z"/></svg>
+          <svg viewBox="0 0 24 24"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1Z"/></svg>
+          <svg viewBox="0 0 24 24"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1Z"/></svg>
+          <svg viewBox="0 0 24 24"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1Z"/></svg>
+        </span>
+        <span class="rev-meta">Based on Google Reviews</span>
+      </div>
+
+      <div class="rev-grid">
+        <article class="rev">
+          <div class="rev-top"><div class="avatar av-b">A</div>
+            <div><div class="rev-name">Review author</div><div class="rev-date">Placeholder date</div></div></div>
+          <p>Placeholder review text. Replace with a real, permitted Google review — never invent
+             testimonials for a healthcare practice.</p>
+          <div class="rev-foot">
+            <svg class="g-logo" viewBox="0 0 48 48">
+              <path fill="#EA4335" stroke="none" d="M24 9.5c3.5 0 6.6 1.2 9 3.6l6.7-6.7C35.6 2.6 30.2.5 24 .5 14.6.5 6.5 5.8 2.6 13.5l7.8 6.1C12.3 13.7 17.7 9.5 24 9.5Z"/>
+              <path fill="#4285F4" stroke="none" d="M46.5 24.5c0-1.6-.15-3.2-.45-4.7H24v9h12.7c-.55 3-2.2 5.5-4.7 7.2l7.6 5.9c4.4-4.1 6.9-10.1 6.9-17.4Z"/>
+              <path fill="#FBBC05" stroke="none" d="M10.4 28.4A14.6 14.6 0 0 1 9.6 24c0-1.5.3-3 .8-4.4l-7.8-6.1A23.5 23.5 0 0 0 .5 24c0 3.8.9 7.4 2.1 10.5l7.8-6.1Z"/>
+              <path fill="#34A853" stroke="none" d="M24 47.5c6.2 0 11.5-2 15.3-5.6l-7.6-5.9c-2.1 1.4-4.8 2.3-7.7 2.3-6.3 0-11.7-4.2-13.6-10.1l-7.8 6.1C6.5 42.2 14.6 47.5 24 47.5Z"/>
+            </svg>
+            <span>Google Review</span>
+          </div>
+        </article>
+
+        <article class="rev">
+          <div class="rev-top"><div class="avatar av-g">B</div>
+            <div><div class="rev-name">Review author</div><div class="rev-date">Placeholder date</div></div></div>
+          <p>Placeholder review text. Pull these from the practice's Google Business Profile.</p>
+          <div class="rev-foot">
+            <svg class="g-logo" viewBox="0 0 48 48">
+              <path fill="#EA4335" stroke="none" d="M24 9.5c3.5 0 6.6 1.2 9 3.6l6.7-6.7C35.6 2.6 30.2.5 24 .5 14.6.5 6.5 5.8 2.6 13.5l7.8 6.1C12.3 13.7 17.7 9.5 24 9.5Z"/>
+              <path fill="#4285F4" stroke="none" d="M46.5 24.5c0-1.6-.15-3.2-.45-4.7H24v9h12.7c-.55 3-2.2 5.5-4.7 7.2l7.6 5.9c4.4-4.1 6.9-10.1 6.9-17.4Z"/>
+              <path fill="#FBBC05" stroke="none" d="M10.4 28.4A14.6 14.6 0 0 1 9.6 24c0-1.5.3-3 .8-4.4l-7.8-6.1A23.5 23.5 0 0 0 .5 24c0 3.8.9 7.4 2.1 10.5l7.8-6.1Z"/>
+              <path fill="#34A853" stroke="none" d="M24 47.5c6.2 0 11.5-2 15.3-5.6l-7.6-5.9c-2.1 1.4-4.8 2.3-7.7 2.3-6.3 0-11.7-4.2-13.6-10.1l-7.8 6.1C6.5 42.2 14.6 47.5 24 47.5Z"/>
+            </svg>
+            <span>Google Review</span>
+          </div>
+        </article>
+
+        <article class="rev">
+          <div class="rev-top"><div class="avatar av-p">C</div>
+            <div><div class="rev-name">Review author</div><div class="rev-date">Placeholder date</div></div></div>
+          <p>Placeholder review text. Confirm the client is comfortable displaying reviews before publishing.</p>
+          <div class="rev-foot">
+            <svg class="g-logo" viewBox="0 0 48 48">
+              <path fill="#EA4335" stroke="none" d="M24 9.5c3.5 0 6.6 1.2 9 3.6l6.7-6.7C35.6 2.6 30.2.5 24 .5 14.6.5 6.5 5.8 2.6 13.5l7.8 6.1C12.3 13.7 17.7 9.5 24 9.5Z"/>
+              <path fill="#4285F4" stroke="none" d="M46.5 24.5c0-1.6-.15-3.2-.45-4.7H24v9h12.7c-.55 3-2.2 5.5-4.7 7.2l7.6 5.9c4.4-4.1 6.9-10.1 6.9-17.4Z"/>
+              <path fill="#FBBC05" stroke="none" d="M10.4 28.4A14.6 14.6 0 0 1 9.6 24c0-1.5.3-3 .8-4.4l-7.8-6.1A23.5 23.5 0 0 0 .5 24c0 3.8.9 7.4 2.1 10.5l7.8-6.1Z"/>
+              <path fill="#34A853" stroke="none" d="M24 47.5c6.2 0 11.5-2 15.3-5.6l-7.6-5.9c-2.1 1.4-4.8 2.3-7.7 2.3-6.3 0-11.7-4.2-13.6-10.1l-7.8 6.1C6.5 42.2 14.6 47.5 24 47.5Z"/>
+            </svg>
+            <span>Google Review</span>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- final CTA -->
+  <section class="cta" id="contact">
+    <div class="sec-space sm"></div>
+    <div class="container">
+      <div class="cta-panel">
+        <div>
+          <h2>Start with a <em>conversation</em></h2>
+          <p>A free 15-minute call to see whether this is the right fit. No forms, no obligation.</p>
+        </div>
+        <div class="hero-actions" style="margin:0">
+          <a class="btn btn-primary" href="#" id="bookBtn">Book a free consult</a>
+          <a class="btn btn-ghost" href="tel:+15550000000" id="ctaPhone">Call the practice</a>
+        </div>
+      </div>
+    </div>
+    <div class="sec-space sm"></div>
+  </section>
+
+  <!-- footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-in">
+        <div class="footer-top">
+          <div class="footer-brand">
+            <span class="brand"><span class="brand-mark">RC</span><span>Riverstone Counseling</span></span>
+            <p>Individual, couples and trauma therapy. Virtual across the state and in-person by appointment.</p>
+          </div>
+          <div class="footer-col"><h4>Services</h4>
+            <a href="#services">Anxiety &amp; Stress</a><a href="#services">Couples Therapy</a>
+            <a href="#services">Trauma &amp; EMDR</a><a href="#services">Grief &amp; Transitions</a></div>
+          <div class="footer-col"><h4>Practice</h4>
+            <a href="#about">About</a><a href="#approach">How it works</a>
+            <a href="#reviews">Reviews</a><a href="#contact">Contact</a></div>
+          <div class="footer-col"><h4>Get in touch</h4>
+            <a href="tel:+15550000000" id="footPhone">(555) 000-0000</a>
+            <a href="mailto:hello@example.com" id="footEmail">hello@example.com</a>
+            <p>Mon–Thu, 9am–6pm</p></div>
+        </div>
+
+        <div class="crisis">
+          <b>In crisis?</b> This practice is not an emergency service. If you are in immediate danger call 911.
+          For 24/7 support call or text <b>988</b> (Suicide &amp; Crisis Lifeline).
+        </div>
+
+        <div class="footer-legal">
+          <span>&copy; <span id="year"></span> Practice name. All rights reserved.</span>
+          <span>Privacy Policy · Good Faith Estimate · Accessibility</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<!-- service modal -->
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal-card" id="modalCard">
+    <div class="modal-head" id="modalHead">
+      <div><span class="tag" id="modalTag"></span><h3 id="modalTitle"></h3></div>
+      <button class="modal-x" id="modalX" aria-label="Close">
+        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <p id="modalDesc"></p>
+      <h4>Who this tends to help</h4>
+      <ul id="modalList"></ul>
+      <div class="modal-foot">
+        <a class="btn btn-primary" href="#contact" id="modalCta">Book a free consult</a>
+        <button class="btn btn-dark" id="modalClose2">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ===========================================================================
+   CONFIG — swap these values per client. Everything else is structural.
+   =========================================================================== */
+var CONFIG = {
+  practice : 'Riverstone Counseling',
+  initials : 'RC',
+  phone    : '(555) 000-0000',
+  phoneHref: 'tel:+15550000000',
+  email    : 'hello@example.com',
+  bookUrl  : '#contact',
+  heroPhoto: '',        // practitioner / room photo
+  aboutPhoto:'',        // practitioner portrait
+};
+
+var SVC = {
+  anxiety:{tag:'Individual',title:'Anxiety & Stress',
+    desc:'Work focused on the physical and mental patterns that keep anxiety running — what sets it off, what keeps it going, and what actually settles it. We build skills you can use between sessions rather than only talking things through.',
+    list:['Constant worry that is hard to switch off','Panic symptoms, or avoiding places where they happened','Trouble sleeping because the mind will not stop','Performance and health-related anxiety']},
+  couples:{tag:'Relationship',title:'Couples Therapy',
+    desc:'Structured sessions for two people who keep landing in the same conflict. We slow the pattern down enough to see what each person is actually asking for, then practise a different way through it.',
+    list:['The same argument on repeat with no resolution','Rebuilding after a breach of trust','Feeling more like roommates than partners','Deciding whether to repair or separate']},
+  trauma:{tag:'Trauma',title:'Trauma & EMDR',
+    desc:'Trauma-focused work including EMDR and parts-based approaches. Pacing is set by you — we build stability first and only process memories when there is enough support in place to do it safely.',
+    list:['Flashbacks, nightmares, or being easily startled','A single incident that changed how you feel day to day','Childhood experiences still shaping adult relationships','Feeling numb or disconnected from yourself']},
+  grief:{tag:'Life change',title:'Grief & Transitions',
+    desc:'Space for loss and change that does not follow a tidy timeline. This is not about moving on — it is about carrying what happened in a way that leaves room for the rest of your life.',
+    list:['Loss of a partner, parent, child or friend','Divorce, separation, or the end of a long relationship','A diagnosis that changed your plans','Relocation, retirement, or a career ending']}
+};
+
+/* config application */
+(function(){
+  var y=document.getElementById('year'); if(y) y.textContent=new Date().getFullYear();
+  var set=function(id,fn){var e=document.getElementById(id); if(e) fn(e);};
+  set('brandName',function(e){e.textContent=CONFIG.practice});
+  set('brandMark',function(e){e.textContent=CONFIG.initials});
+  set('navPhone', function(e){e.href=CONFIG.phoneHref});
+  set('ctaPhone', function(e){e.href=CONFIG.phoneHref});
+  set('footPhone',function(e){e.href=CONFIG.phoneHref;e.textContent=CONFIG.phone});
+  set('footEmail',function(e){e.href='mailto:'+CONFIG.email;e.textContent=CONFIG.email});
+  set('bookBtn',  function(e){e.href=CONFIG.bookUrl});
+  ['heroPhoto','aboutPhoto'].forEach(function(id){
+    var e=document.getElementById(id), src=CONFIG[id];
+    if(e&&src){e.src=src;e.hidden=false;}
+  });
+})();
+
+/* announcement bar — sessionStorage so it returns next visit */
+(function(){
+  var bar=document.getElementById('annbar'),x=document.getElementById('annX');
+  if(sessionStorage.getItem('ann-dismissed')) bar.classList.add('hide');
+  x.addEventListener('click',function(){
+    bar.classList.add('hide'); sessionStorage.setItem('ann-dismissed','1');
+  });
+})();
+
+/* nav */
+(function(){
+  var b=document.getElementById('burger'),m=document.getElementById('navMenu');
+  b.addEventListener('click',function(){
+    var open=m.classList.toggle('open');
+    b.setAttribute('aria-expanded',open?'true':'false');
+  });
+  m.addEventListener('click',function(e){
+    if(e.target.classList.contains('nav-link')){
+      m.classList.remove('open'); b.setAttribute('aria-expanded','false');
+    }
+  });
+})();
+
+/* ticker — duplicate the track so translateX(-50%) loops seamlessly */
+(function(){ var t=document.getElementById('tickTrack'); t.innerHTML+=t.innerHTML; })();
+
+/* service modal */
+(function(){
+  var modal=document.getElementById('modal'), head=document.getElementById('modalHead'),
+      last=null;
+  function open(key,trigger){
+    var d=SVC[key]; if(!d) return;
+    last=trigger;
+    document.getElementById('modalTag').textContent=d.tag;
+    document.getElementById('modalTitle').textContent=d.title;
+    document.getElementById('modalDesc').textContent=d.desc;
+    var ul=document.getElementById('modalList'); ul.innerHTML='';
+    d.list.forEach(function(t){var li=document.createElement('li');li.textContent=t;ul.appendChild(li)});
+    // inherit the card's colour so the modal matches the modality
+    head.style.background=getComputedStyle(trigger).getPropertyValue('--m-vibrant')||'';
+    document.getElementById('modalCta').href=CONFIG.bookUrl;
+    modal.classList.add('open');
+    document.body.style.overflow='hidden';
+    document.getElementById('modalX').focus();
+  }
+  function close(){
+    modal.classList.remove('open');
+    document.body.style.overflow='';
+    if(last) last.focus();
+  }
+  document.querySelectorAll('.mod').forEach(function(card){
+    card.addEventListener('click',function(){ open(card.dataset.svc,card); });
+  });
+  document.getElementById('modalX').addEventListener('click',close);
+  document.getElementById('modalClose2').addEventListener('click',close);
+  modal.addEventListener('click',function(e){ if(e.target===modal) close(); });
+  document.addEventListener('keydown',function(e){
+    if(e.key==='Escape'&&modal.classList.contains('open')) close();
+  });
+})();
+</script>
+</body>
+</html>

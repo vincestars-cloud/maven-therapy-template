@@ -1,0 +1,678 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Design-System Reference Build — measured from mavenclinic.com</title>
+<!--
+  Every value in this file was read out of spec.json via ../respdiff.js, which
+  diffs each element's computed styles across the three captured viewports
+  (1440 desktop / 768 tablet / 390 mobile-emulated). Nothing is eyeballed.
+
+  Capture widths map to the Webflow ladder as:
+    desktop 1440  -> >991
+    tablet   768  -> <=991 (768 is above the 767 breakpoint)
+    mobile   390  -> <=479
+  The 480-767 band was NOT captured, so it is not authored here — see
+  DESIGN-SYSTEM.md "Gaps". Content slots are placeholders; fonts are stand-ins.
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;300;400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+/* ===========================================================================
+   1. TOKENS — measured
+   Root font-size shifts per viewport (15.8848 / 14.6752 / 14). This is the
+   mechanism behind the whole fluid system; body copy and line-height follow it.
+   =========================================================================== */
+:root{
+  --root-fs:15.8848px; --root-lh:23.8272px;
+
+  /* palette — hex from computed rgb(), counts = measured frequency */
+  --natural:#ede9e3;          /* page bg                     */
+  --natural-darker:#e7e0d7;
+  --deepest-green:#013126;    /* text + dark sections  ×211  */
+  --deep-green:#035748;
+  --maven-green:#00856f;      /* nav CTA fill          ×46   */
+  --electric-green:#58eda2;   /* accent                ×52   */
+  --fresh-green:#71d1b5;
+  --muted:#64726f;            /* secondary text        ×52   */
+  --slate:#263633;            /* nav link              ×15   */
+  --white:#fff;
+
+  /* type — measured px per viewport, weight/line-height as computed */
+  --fs-h1:73.7136px;  --lh-h1:74px;      /* w300 */
+  --fs-h2:59.944px;   --lh-h2:60px;      /* w300 */
+  --fs-prog:23.6544px;--lh-prog:28px;    /* program card h3, w300 */
+  --fs-care:23.6544px;--lh-care:28px;    /* care card h3,    w300 */
+  --ls-tight:-.02em;
+
+  /* spacing — measured, desktop rung of the fluid curve */
+  --section-space:157.938px;      /* .n4-g_section_space          */
+  --section-space-sm:78.969px;    /* small variant                */
+  --gap-grid:23.2032px;           /* stats + industry grid gap    */
+  --gap-flow:46.9728px;           /* stories + footer flow gap    */
+  --gap-stats:142.406px;          /* stats_contain vertical gap   */
+  --pad-stats:118.406px;          /* stats_contain block padding  */
+  --pad-card:31.4336px;           /* feature card padding         */
+  --mt-slider:31.4336px;          /* slider top margin            */
+  --site-gutter:91.888px;         /* container inset (both sides) */
+
+  --radius-nav:4px; --radius-card:8px; --radius-panel:24px;
+
+  /* fonts: license-safe stand-ins.
+     Helvetica Now Display -> Inter | Ivar Display italic -> DM Serif Display */
+  --font-display:'Inter',-apple-system,'Helvetica Neue',Arial,sans-serif;
+  --font-serif:'DM Serif Display',Georgia,serif;
+}
+
+/* ===========================================================================
+   2. RESET
+   =========================================================================== */
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;font-size:var(--root-fs)}
+body{margin:0;background:var(--natural);color:var(--deepest-green);
+     font-family:var(--font-display);font-size:var(--root-fs);font-weight:400;
+     line-height:var(--root-lh);letter-spacing:var(--ls-tight);
+     -webkit-font-smoothing:antialiased}
+img{display:block;max-width:100%}
+svg{fill:none;stroke-linecap:round;stroke-linejoin:round}
+a{color:inherit;text-decoration:none}
+h1,h2,h3,h4,p{margin:0}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+/* clip, not hidden — hidden on the root kills position:fixed AND position:sticky */
+.page-wrap{display:flex;flex-direction:column;min-height:900px;overflow-x:clip}
+/* measured: max-width:min(1512px, 100% - 91.888px), auto side margins */
+.u-container{width:100%;max-width:min(1512px,100% - var(--site-gutter));
+             margin-inline:auto}
+
+/* ===========================================================================
+   3. BANNER — fixed, h47.83, shadow rgba(38,54,51,.12) 0 0 4px 4px
+   =========================================================================== */
+.banner{position:fixed;inset-block-start:0;inset-inline:0;z-index:1000;
+        background:var(--natural);padding:12px;
+        box-shadow:rgba(38,54,51,.12) 0 0 4px 4px}
+.banner-inner{display:flex;align-items:center;justify-content:center;
+              max-width:1200px;margin-inline:auto;padding-inline:10px;min-height:23.83px}
+.banner p{text-align:center}
+.banner a{text-decoration:underline;padding-inline-start:.35em}
+.banner-close{position:absolute;inset-inline-end:20px;inset-block-start:50%;
+              transform:translateY(-50%);width:44px;height:44px;display:grid;place-items:center}
+.banner.is-hidden{display:none}
+
+/* ===========================================================================
+   4. NAV — measured
+   navbar : 1270w / 64h / pad 0 45px      / margin 15px 85px 0
+   shell  : 1180w / 64h / radius 4        / shadow rgba(0,0,0,.2) 0 0 4px 0
+   inner  : 1150w / flex space-between
+   link   : 16px w600 #263633 / pad 20px 30px 20px 15px
+   =========================================================================== */
+.navbar{position:relative;z-index:100;width:100%;max-width:1270px;height:64px;
+        margin:15px auto 0;padding-inline:45px}
+.nav-shell{height:64px;max-width:1180px;margin-inline:auto;padding-inline:15px;
+           background:var(--white);border-radius:var(--radius-nav);
+           box-shadow:rgba(0,0,0,.2) 0 0 4px 0}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;
+           height:100%;max-width:1150px;margin-inline:auto}
+.nav-logo{display:flex;align-items:center;gap:.5rem;font-size:1.25rem;font-weight:600;
+          letter-spacing:.08em;color:var(--maven-green)}
+.nav-logo span{width:26px;height:14px;border:2px solid currentColor;border-radius:50%/100%}
+.nav-menu{display:flex;align-items:center}
+.nav-link{display:inline-flex;align-items:center;gap:6px;height:64px;
+          padding:20px 30px 20px 15px;font-size:16px;font-weight:600;line-height:24px;
+          color:var(--slate);position:relative}
+.nav-link.is-plain{padding-inline-end:15px}
+/* measured @media(min-width:992px): 2px #0b8470 underline pinned bottom:1px */
+@media (min-width:992px){
+  .nav-link[data-drop]:hover::before{content:"";position:absolute;inset-inline:0;
+    inset-block-end:1px;height:2px;background:#0b8470}
+}
+.nav-caret{width:10px;height:10px;stroke:currentColor;stroke-width:2}
+.nav-actions{display:flex;align-items:center;gap:12px}
+.btn{display:inline-flex;align-items:center;justify-content:center;height:40px;
+     padding-inline:20px;border-radius:var(--radius-nav);font-size:16px;
+     font-weight:600;line-height:1}
+.btn-ghost{border:1px solid var(--maven-green);color:var(--maven-green)}
+.btn-solid{background:var(--maven-green);color:var(--white)}
+.btn-solid:hover{background:var(--electric-green);color:var(--deepest-green)}
+.nav-toggle{display:none;width:44px;height:44px;padding:10px}
+.nav-toggle span{display:block;height:2px;background:var(--slate);margin-block:3px;
+                 transition:transform .25s,opacity .25s}
+.nav-toggle[aria-expanded="true"] span:nth-child(1){transform:translateY(5px) rotate(45deg)}
+.nav-toggle[aria-expanded="true"] span:nth-child(2),
+.nav-toggle[aria-expanded="true"] span:nth-child(3){opacity:0}
+.nav-toggle[aria-expanded="true"] span:nth-child(4){transform:translateY(-5px) rotate(-45deg)}
+
+/* ===========================================================================
+   5. HERO — measured
+   wrap      : min-h 900 / pad 54px 12px 12px / bg deepest-green
+   component : 1416x834 flex-row, overflow hidden, position relative
+   panel     : radius 24, overflow clip
+   fade      : linear-gradient(rgba(0,0,0,0), #000) @ opacity .5
+   h1        : 73.7136px / w300 / lh 74px
+   =========================================================================== */
+.hero{position:relative;display:flex;min-height:900px;padding:54px 12px 12px;
+      background:var(--deepest-green);color:var(--white)}
+.hero-component{position:relative;display:flex;flex-direction:row;flex:1;
+                height:834px;overflow:hidden}
+.hero-panel{position:absolute;inset:0;border-radius:var(--radius-panel);overflow:clip}
+.hero-media{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+            background:var(--deep-green)}
+.hero-fade{position:absolute;inset:0;opacity:.5;
+           background:linear-gradient(rgba(0,0,0,0),rgb(0,0,0))}
+.hero-contain{position:relative;z-index:2;display:block;width:100%;
+              max-width:min(1512px,100% - var(--site-gutter));margin-inline:auto}
+.hero-layout{display:flex;flex-direction:column;justify-content:center;
+             align-items:flex-start;height:834px}
+.hero h1{font-size:var(--fs-h1);font-weight:300;line-height:var(--lh-h1);
+         letter-spacing:var(--ls-tight);max-width:16ch}
+.hero h1 em{font-family:var(--font-serif);font-style:italic;font-weight:400}
+.hero-sub{margin-block-start:24px;font-size:18px;font-weight:500;max-width:46ch;
+          color:rgba(255,255,255,.88)}
+.hero-cta{margin-block-start:32px;display:flex;gap:12px;flex-wrap:wrap}
+.hero .btn-solid,.hero .btn-ghost{height:48px;padding-inline:28px}
+.hero .btn-ghost{border-color:rgba(255,255,255,.6);color:#fff}
+/* measured .n4-hero_main_shape_wrap: y638 h209 */
+.hero-shape{position:absolute;inset-inline:0;inset-block-end:12px;height:209px;
+            display:grid;place-items:center;pointer-events:none;font-size:12px;
+            letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.35)}
+
+/* ===========================================================================
+   6. SECTION RHYTHM — measured 157.938 / small 78.969
+   =========================================================================== */
+.section{position:relative}
+.section-space{height:var(--section-space)}
+.section-space.is-sm{height:var(--section-space-sm)}
+.section--dark{background:var(--deepest-green);color:var(--white)}
+.section--natural{background:var(--natural);color:var(--deepest-green)}
+.section-heading{font-size:var(--fs-h2);font-weight:300;line-height:var(--lh-h2);
+                 letter-spacing:var(--ls-tight);max-width:20ch}
+.section-heading em{font-family:var(--font-serif);font-style:italic;font-weight:400}
+.section-text{margin-block-start:24px;font-size:18px;max-width:46ch;opacity:.85}
+.eyebrow{font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
+         color:var(--electric-green);margin-block-end:16px}
+
+/* ===========================================================================
+   7. PROGRAM SLIDER — measured
+   slider_wrap : margin-top 31.4336 / h540
+   slide       : 328.03w x 540h, pad 0 (desktop)
+   card h3     : 23.6544 / w300 / lh28
+   =========================================================================== */
+.services-body{min-height:340px;display:flex;flex-direction:column;justify-content:center}
+.slider{margin-block-start:var(--mt-slider);display:grid;grid-auto-flow:column;
+        grid-auto-columns:328.03px;gap:0;overflow-x:auto;scroll-snap-type:x mandatory;
+        scrollbar-width:thin}
+.slide{scroll-snap-align:start;height:540px;position:relative;display:flex;
+       flex-direction:column;justify-content:flex-end;padding:0;
+       color:var(--white)}
+.slide-inner{position:relative;height:100%;margin-inline:6px;border-radius:var(--radius-card);
+             overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;
+             padding:24px;background:var(--prog-strong)}
+.slide-inner::before{content:"";position:absolute;inset:0;
+       background:linear-gradient(rgba(0,0,0,0) 35%,rgba(0,0,0,.55))}
+.slide-tag{position:relative;align-self:flex-start;margin-block-end:auto;padding:6px 12px;
+           border-radius:500px;font-size:11px;font-weight:600;letter-spacing:.1em;
+           text-transform:uppercase;background:var(--prog-light);color:var(--prog-vibrant)}
+.slide h3{position:relative;font-size:var(--fs-prog);font-weight:300;line-height:var(--lh-prog)}
+.slide p{position:relative;margin-block-start:8px;opacity:.9}
+.slide-more{position:relative;margin-block-start:16px;font-size:12px;font-weight:700;
+            letter-spacing:.04em;opacity:.65;transition:opacity .2s}
+.slide:hover .slide-more{opacity:1}
+.prog-fertility{--prog-vibrant:#008799;--prog-strong:#26c9df;--prog-light:#e4fcff}
+.prog-maternity{--prog-vibrant:#2469ff;--prog-strong:#61a0ff;--prog-light:#ddeefe}
+.prog-parenting{--prog-vibrant:#734dff;--prog-strong:#7176ff;--prog-light:#ede9fc}
+.prog-menopause{--prog-vibrant:#ffb122;--prog-strong:#ffd622;--prog-light:#fff2d1}
+/* care row — measured wrap h355, inner swiper h288 */
+.care-row{margin-block-start:64px}
+.care-slider{margin-block-start:24px;display:grid;grid-auto-flow:column;
+             grid-auto-columns:minmax(260px,1fr);gap:24px;overflow-x:auto;
+             scroll-snap-type:x mandatory}
+.care-card{scroll-snap-align:start;height:288px;border-radius:var(--radius-card);
+           overflow:clip;position:relative;display:flex;flex-direction:column;
+           justify-content:flex-end;padding:24px;background:var(--deep-green);color:var(--white)}
+.care-card .badge{position:absolute;inset-block-start:16px;inset-inline-start:16px;
+           display:inline-flex;align-items:center;gap:6px;padding:5px 10px;
+           border-radius:var(--radius-nav);background:var(--maven-green);
+           font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+.care-card h3{font-size:var(--fs-care);font-weight:300;line-height:var(--lh-care)}
+.care-card p{font-size:14px;opacity:.8;margin-block-start:4px}
+
+/* ===========================================================================
+   8. FEATURE CARDS — measured 548.17 x 400, pad 31.4336, radius 8,
+      bg deepest-green, min-height 400. Two per row at 1348 container.
+   =========================================================================== */
+.features-grid{margin-block-start:48px;display:grid;
+               grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--gap-grid)}
+.feature-card{position:relative;min-height:400px;border-radius:var(--radius-card);
+              overflow:hidden;background:var(--deepest-green);color:var(--white);
+              padding:var(--pad-card);display:flex;flex-direction:column;
+              justify-content:flex-end;border:1px solid rgba(255,255,255,.12)}
+.feature-card h3{font-size:var(--fs-prog);font-weight:300;line-height:var(--lh-prog);max-width:20ch}
+
+/* ===========================================================================
+   9. PARALLAX + STATS — measured
+   parallax_sticky : position:sticky, h640
+   stats_wrap      : radius 24 24 0 0, bg natural
+   stats_contain   : gap 142.406, padding 118.406 0
+   stats_layout    : 4 x 319.625px, gap 23.2032   (-> 2col -> 1col)
+   =========================================================================== */
+.parallax{position:relative}
+.parallax-sticky{position:sticky;inset-block-start:0;height:640px;overflow:clip}
+.parallax-visual{position:absolute;inset:0;background:var(--deep-green)}
+.parallax-overlap{position:relative;z-index:2}
+.stats-wrap{background:var(--natural);color:var(--deepest-green);
+            border-radius:var(--radius-panel) var(--radius-panel) 0 0}
+.stats-contain{display:flex;flex-direction:column;gap:var(--gap-stats);
+               padding-block:var(--pad-stats)}
+.stats-body{max-width:579px}
+.stats-layout{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--gap-grid)}
+.stat{padding-block-start:24px;border-block-start:1px solid rgba(1,49,38,.18)}
+.stat b{display:block;font-size:36px;font-weight:300;line-height:1}
+.stat span{display:block;margin-block-start:12px;color:var(--muted)}
+
+/* ===========================================================================
+   10. AUDIENCE GRID — measured 662.453 x 2, gap 23.2032
+   =========================================================================== */
+.industry-layout{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+                 gap:var(--gap-grid);align-items:start}
+.industry-list{display:flex;flex-direction:column}
+.industry-link{display:flex;align-items:center;justify-content:space-between;gap:24px;
+               padding-block:24px;border-block-end:1px solid rgba(255,255,255,.2)}
+.industry-link h3{font-size:var(--fs-prog);font-weight:300;line-height:var(--lh-prog)}
+.industry-link svg{width:20px;height:20px;stroke:currentColor;stroke-width:1.5;
+                   transition:transform .25s}
+.industry-link:hover svg{transform:translateX(6px)}
+.industry-link:hover h3{color:var(--electric-green)}
+
+/* ===========================================================================
+   11. MARQUEE — measured logo_wrap 240x140, track w1680 (duplicated)
+   =========================================================================== */
+.trusted{padding-block:119px;background:var(--deepest-green);color:var(--white)}
+.marquee{margin-block-start:32px;overflow:hidden;
+         mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}
+.marquee-track{display:flex;width:max-content;animation:marquee 32s linear infinite}
+.marquee:hover .marquee-track{animation-play-state:paused}
+.marquee-item{display:grid;place-items:center;width:240px;height:140px;flex:none;
+              font-size:15px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
+              color:rgba(255,255,255,.45)}
+@keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* ===========================================================================
+   12. STORIES — measured wrap radius 24, component gap 46.9728, body max-w 573
+   =========================================================================== */
+.stories-wrap{background:var(--deepest-green);color:var(--white);
+              border-radius:var(--radius-panel);padding:95px 48px 96px}
+.stories-component{display:flex;flex-direction:column;gap:var(--gap-flow)}
+.stories-body{max-width:573px}
+.stories-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--gap-grid)}
+.story{padding:32px;border-radius:var(--radius-card);background:rgba(255,255,255,.06);
+       border:1px solid rgba(255,255,255,.12);display:flex;flex-direction:column;gap:24px}
+.story q{font-family:var(--font-serif);font-style:italic;font-size:18px;line-height:1.45;quotes:none}
+.story footer{font-size:13px;color:rgba(255,255,255,.6)}
+
+/* ===========================================================================
+   13. CTA + FOOTER — measured
+   cta_main_layout : align-items center (-> stretch on mobile), body max-w 507
+   footer_top      : flex ROW, gap 46.9728, min-h 321 (-> column)
+   footer_inner    : radius 24 24 0 0
+   =========================================================================== */
+.cta{background:var(--natural);padding-block:96px}
+.cta-layout{display:flex;align-items:center;justify-content:space-between;gap:48px;flex-wrap:wrap}
+.cta-body{display:flex;flex-direction:column;gap:12px;max-width:507px}
+.cta-body h2{font-size:var(--fs-h2);font-weight:300;line-height:var(--lh-h2);
+             letter-spacing:var(--ls-tight)}
+.cta-body h2 em{font-family:var(--font-serif);font-style:italic;font-weight:400}
+.cta .btn-solid{height:48px;padding-inline:28px}
+.footer{background:var(--natural);padding-block-start:48px}
+.footer-inner{background:var(--deepest-green);color:var(--white);
+              border-radius:var(--radius-panel) var(--radius-panel) 0 0;padding:47px 48px 48px}
+.footer-top{display:flex;flex-direction:row;justify-content:space-between;
+            align-items:stretch;gap:var(--gap-flow);min-height:321px}
+.footer-col h4{font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;
+               color:var(--electric-green);margin-block-end:16px}
+.footer-col a{display:block;padding-block:6px;font-size:15px;color:rgba(255,255,255,.8)}
+.footer-col a:hover{color:var(--electric-green)}
+.footer-bottom{margin-block-start:32px;padding-block-start:24px;
+               border-block-start:1px solid rgba(255,255,255,.2);display:flex;
+               justify-content:space-between;gap:24px;flex-wrap:wrap;font-size:13px;
+               color:rgba(255,255,255,.6)}
+
+/* ===========================================================================
+   14. REVEALS — inner atoms only (an opacity:0 <section> = blank gap)
+   =========================================================================== */
+.reveal{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease}
+.reveal.is-in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){
+  .reveal{opacity:1;transform:none;transition:none}
+  .marquee-track{animation:none}
+}
+
+/* ===========================================================================
+   15. <=991  — measured from the 768 capture
+   =========================================================================== */
+@media (max-width:991px){
+  :root{
+    --root-fs:14.6752px; --root-lh:22.0128px;
+    --fs-h1:52.0752px;   --lh-h1:52px;
+    --fs-h2:40.7248px;   --lh-h2:41px;
+    --fs-prog:31.3376px; --lh-prog:41px;   /* program h3 grows at this width */
+    --fs-care:20.0256px; --lh-care:24px;
+    --section-space:138.719px; --section-space-sm:69.359px;
+    --gap-grid:16.0128px; --gap-flow:37.3632px;
+    --gap-stats:128.026px; --pad-stats:104.026px;
+    --pad-card:26.6624px; --mt-slider:26.6624px;
+    --site-gutter:53.4496px;
+  }
+  /* nav: full-bleed bar, radius drops to 0, heights 68/58 */
+  .navbar{max-width:none;height:68px;min-height:62px;margin:0;padding:0 0 10px;
+          display:flex;align-items:center;justify-content:flex-start}
+  .nav-shell{position:relative;width:100%;max-width:none;height:58px;border-radius:0}
+  .nav-toggle{display:block}
+  .nav-menu{position:absolute;inset-block-start:58px;inset-inline:0;flex-direction:column;
+            align-items:stretch;background:var(--white);box-shadow:rgba(0,0,0,.2) 0 0 4px 0;
+            padding:8px;max-height:90vh;overflow-y:auto;overflow-x:hidden;display:none}
+  .nav-menu.is-open{display:flex}
+  .nav-link{height:auto;padding:14px 15px;border-block-end:1px solid #f2f2f2}
+  .nav-actions .btn-ghost{display:none}
+  /* hero: component becomes a column, overflow visible, content bottom-aligned */
+  .hero-component{flex-direction:column;height:958px;overflow:visible;
+                  justify-content:center;align-items:flex-start}
+  .hero-contain{display:flex;flex-direction:column;gap:16px}
+  .hero-layout{height:auto}
+  /* slides go full-width (measured 726.55 at a 715 container) */
+  .slider{grid-auto-columns:100%}
+  .slide{padding:0 6px}
+  /* grids: 2-up stats, feature cards full-width (measured 714.56 x 400) */
+  .stats-layout{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .features-grid{grid-template-columns:1fr}
+  .stories-grid{grid-template-columns:1fr}
+  .footer-top{flex-direction:column}
+}
+
+/* ===========================================================================
+   16. <=479  — measured from the 390 capture
+   NOTE: the 480-767 band was not captured; it inherits the <=991 rules above.
+   =========================================================================== */
+@media (max-width:479px){
+  :root{
+    --root-fs:14px; --root-lh:21px;
+    --fs-h1:40px;   --lh-h1:40px;          /* measured floor is 40, not 30 */
+    --fs-h2:30px;   --lh-h2:36px;
+    --fs-prog:28px; --lh-prog:36px;
+    --fs-care:18px; --lh-care:22px;
+    --section-space:128px; --section-space-sm:64px;
+    --gap-grid:12px; --gap-flow:40px;
+    --gap-stats:32px; --pad-stats:32px;
+    --pad-card:24px; --mt-slider:24px;
+    --site-gutter:32px;
+  }
+  .navbar{height:62px;padding:0 0 5px}
+  .nav-shell{height:46px}
+  .nav-menu{inset-block-start:46px}
+  /* hero: centred text, panel 568 tall, content pinned to the bottom */
+  .hero{padding:54px 8px 8px}
+  .hero-component{height:568px;text-align:center;align-items:stretch;justify-content:flex-end}
+  .hero h1,.hero-sub{max-width:none}
+  .hero-cta{flex-direction:column;align-items:stretch}
+  .hero .btn-solid,.hero .btn-ghost{width:100%}
+  /* grids collapse: stats 1col, industry stays 2-up as a flex row */
+  .stats-layout{grid-template-columns:1fr}
+  .industry-layout{display:flex;flex-direction:column}
+  .cta-layout{align-items:stretch;flex-direction:column}
+  .marquee-item{width:152px;height:90.078px}
+  .stories-wrap{padding:32px 24px}
+  .footer-inner{padding:32px 24px}
+}
+</style>
+</head>
+<body>
+<div class="page-wrap">
+
+  <div class="banner" id="banner">
+    <div class="banner-inner">
+      <p>Placeholder announcement line for the fixed banner slot. <a href="#">Link label</a></p>
+    </div>
+    <button class="banner-close" id="bannerClose" aria-label="Dismiss">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+  </div>
+
+  <main>
+    <header class="hero">
+      <div class="hero-component">
+        <div class="hero-panel">
+          <div class="hero-media" role="img" aria-label="Hero media slot"></div>
+          <div class="hero-fade"></div>
+        </div>
+
+        <nav class="navbar">
+          <div class="nav-shell">
+            <div class="nav-inner">
+              <a class="nav-logo" href="#"><span aria-hidden="true"></span>BRAND</a>
+              <div class="nav-menu" id="navMenu">
+                <a class="nav-link" data-drop href="#">Menu One
+                  <svg class="nav-caret" viewBox="0 0 24 24" fill="none"><path d="m6 9 6 6 6-6"/></svg></a>
+                <a class="nav-link" data-drop href="#">Menu Two
+                  <svg class="nav-caret" viewBox="0 0 24 24" fill="none"><path d="m6 9 6 6 6-6"/></svg></a>
+                <a class="nav-link is-plain" href="#">Item Three</a>
+                <a class="nav-link is-plain" href="#">Item Four</a>
+                <a class="nav-link is-plain" href="#">Item Five</a>
+                <a class="nav-link" data-drop href="#">Menu Six
+                  <svg class="nav-caret" viewBox="0 0 24 24" fill="none"><path d="m6 9 6 6 6-6"/></svg></a>
+              </div>
+              <div class="nav-actions">
+                <a class="btn btn-ghost" href="#">Secondary</a>
+                <a class="btn btn-solid" href="#">Primary CTA</a>
+                <button class="nav-toggle" id="navToggle" aria-label="Menu" aria-expanded="false" aria-controls="navMenu">
+                  <span></span><span></span><span></span><span></span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </nav>
+
+        <div class="hero-contain">
+          <div class="hero-layout">
+            <h1 class="reveal">Display headline slot with an <em>italic accent</em></h1>
+            <p class="hero-sub reveal">Supporting subhead slot at the measured 18px / w500 lead size.</p>
+            <div class="hero-cta reveal">
+              <a class="btn btn-solid" href="#">Primary CTA</a>
+              <a class="btn btn-ghost" href="#">Secondary CTA</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="hero-shape">Rive canvas slot &middot; 209px</div>
+      </div>
+    </header>
+
+    <section class="section section--dark">
+      <div class="section-space"></div>
+      <div class="u-container">
+        <div class="services-body">
+          <p class="eyebrow reveal">Section eyebrow</p>
+          <h2 class="section-heading reveal">Program section heading with an <em>accent</em></h2>
+          <p class="section-text reveal">Supporting paragraph slot.</p>
+        </div>
+
+        <div class="slider">
+          <article class="slide prog-fertility reveal"><div class="slide-inner">
+            <span class="slide-tag">Program 01</span><h3>Program card one</h3>
+            <p>Short supporting line.</p><span class="slide-more">Learn more &rarr;</span></div></article>
+          <article class="slide prog-maternity reveal"><div class="slide-inner">
+            <span class="slide-tag">Program 02</span><h3>Program card two</h3>
+            <p>Short supporting line.</p><span class="slide-more">Learn more &rarr;</span></div></article>
+          <article class="slide prog-parenting reveal"><div class="slide-inner">
+            <span class="slide-tag">Program 03</span><h3>Program card three</h3>
+            <p>Short supporting line.</p><span class="slide-more">Learn more &rarr;</span></div></article>
+          <article class="slide prog-menopause reveal"><div class="slide-inner">
+            <span class="slide-tag">Program 04</span><h3>Program card four</h3>
+            <p>Short supporting line.</p><span class="slide-more">Learn more &rarr;</span></div></article>
+        </div>
+
+        <div class="care-row">
+          <div class="care-slider">
+            <article class="care-card reveal"><span class="badge">New</span><h3>Care card one</h3><p>Supporting line</p></article>
+            <article class="care-card reveal"><span class="badge">New</span><h3>Care card two</h3><p>Supporting line</p></article>
+            <article class="care-card reveal"><span class="badge">New</span><h3>Care card three</h3><p>Supporting line</p></article>
+          </div>
+        </div>
+      </div>
+      <div class="section-space is-sm"></div>
+    </section>
+
+    <section class="section section--dark">
+      <div class="u-container">
+        <h2 class="section-heading reveal">Platform section heading</h2>
+        <p class="section-text reveal">Supporting paragraph slot.</p>
+        <div class="features-grid">
+          <article class="feature-card reveal"><h3>Feature card one</h3></article>
+          <article class="feature-card reveal"><h3>Feature card two</h3></article>
+          <article class="feature-card reveal"><h3>Feature card three</h3></article>
+          <article class="feature-card reveal"><h3>Feature card four</h3></article>
+          <article class="feature-card reveal"><h3>Feature card five</h3></article>
+          <article class="feature-card reveal"><h3>Feature card six</h3></article>
+        </div>
+      </div>
+      <div class="section-space"></div>
+    </section>
+
+    <section class="parallax">
+      <div class="parallax-sticky"><div class="parallax-visual"></div></div>
+      <div class="parallax-overlap">
+        <div class="stats-wrap">
+          <div class="u-container">
+            <div class="stats-contain">
+              <div class="stats-body">
+                <h2 class="section-heading reveal">Stats section heading</h2>
+                <p class="section-text reveal">Supporting paragraph slot.</p>
+              </div>
+              <div class="stats-layout">
+                <div class="stat reveal"><b>00%</b><span>Metric label slot one</span></div>
+                <div class="stat reveal"><b>00%</b><span>Metric label slot two</span></div>
+                <div class="stat reveal"><b>00%</b><span>Metric label slot three</span></div>
+                <div class="stat reveal"><b>00%</b><span>Metric label slot four</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--dark">
+      <div class="section-space"></div>
+      <div class="u-container">
+        <div class="industry-layout">
+          <div>
+            <h2 class="section-heading reveal">Audience section heading</h2>
+            <p class="section-text reveal">Supporting paragraph slot.</p>
+          </div>
+          <div class="industry-list">
+            <a class="industry-link reveal" href="#"><h3>Audience one</h3>
+              <svg viewBox="0 0 24 24" fill="none"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a>
+            <a class="industry-link reveal" href="#"><h3>Audience two</h3>
+              <svg viewBox="0 0 24 24" fill="none"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a>
+            <a class="industry-link reveal" href="#"><h3>Audience three</h3>
+              <svg viewBox="0 0 24 24" fill="none"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a>
+            <a class="industry-link reveal" href="#"><h3>Audience four</h3>
+              <svg viewBox="0 0 24 24" fill="none"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a>
+            <a class="industry-link reveal" href="#"><h3>Audience five</h3>
+              <svg viewBox="0 0 24 24" fill="none"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a>
+          </div>
+        </div>
+      </div>
+      <div class="section-space"></div>
+    </section>
+
+    <section class="trusted">
+      <div class="u-container"><p class="eyebrow reveal" style="text-align:center">Trust row eyebrow</p></div>
+      <div class="marquee">
+        <div class="marquee-track" id="marqueeTrack">
+          <div class="marquee-item">Logo 1</div><div class="marquee-item">Logo 2</div>
+          <div class="marquee-item">Logo 3</div><div class="marquee-item">Logo 4</div>
+          <div class="marquee-item">Logo 5</div><div class="marquee-item">Logo 6</div>
+          <div class="marquee-item">Logo 7</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--natural">
+      <div class="u-container">
+        <div class="stories-wrap">
+          <div class="stories-component">
+            <div class="stories-body">
+              <h2 class="section-heading reveal">Stories section heading</h2>
+              <p class="section-text reveal">Supporting paragraph slot.</p>
+            </div>
+            <div class="stories-grid">
+              <article class="story reveal"><q>Testimonial quote slot one.</q><footer>Attribution slot</footer></article>
+              <article class="story reveal"><q>Testimonial quote slot two.</q><footer>Attribution slot</footer></article>
+              <article class="story reveal"><q>Testimonial quote slot three.</q><footer>Attribution slot</footer></article>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta">
+      <div class="u-container">
+        <div class="cta-layout">
+          <div class="cta-body">
+            <h2 class="reveal">Closing CTA headline with an <em>accent</em></h2>
+            <p class="section-text reveal" style="margin:0">Supporting line slot.</p>
+          </div>
+          <a class="btn btn-solid reveal" href="#">Primary CTA</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="u-container">
+      <div class="footer-inner">
+        <div class="footer-top">
+          <div class="footer-col">
+            <a class="nav-logo" href="#" style="color:var(--electric-green)"><span aria-hidden="true"></span>BRAND</a>
+          </div>
+          <div class="footer-col"><h4>Column one</h4>
+            <a href="#">Link</a><a href="#">Link</a><a href="#">Link</a><a href="#">Link</a></div>
+          <div class="footer-col"><h4>Column two</h4>
+            <a href="#">Link</a><a href="#">Link</a><a href="#">Link</a><a href="#">Link</a></div>
+          <div class="footer-col"><h4>Column three</h4>
+            <a href="#">Link</a><a href="#">Link</a><a href="#">Link</a><a href="#">Link</a></div>
+          <div class="footer-col"><h4>Column four</h4>
+            <a href="#">Link</a><a href="#">Link</a><a href="#">Link</a><a href="#">Link</a></div>
+        </div>
+        <div class="footer-bottom">
+          <span>Footer legal slot</span><span>Secondary legal slot</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<script>
+(function(){
+  var b=document.getElementById('banner'),x=document.getElementById('bannerClose');
+  if(sessionStorage.getItem('banner-dismissed')) b.classList.add('is-hidden');
+  x.addEventListener('click',function(){b.classList.add('is-hidden');sessionStorage.setItem('banner-dismissed','1')});
+})();
+(function(){
+  var t=document.getElementById('navToggle'),m=document.getElementById('navMenu');
+  t.addEventListener('click',function(){
+    var open=m.classList.toggle('is-open');
+    t.setAttribute('aria-expanded',open?'true':'false');
+  });
+})();
+(function(){ var tr=document.getElementById('marqueeTrack'); tr.innerHTML+=tr.innerHTML; })();
+(function(){
+  var els=document.querySelectorAll('.reveal');
+  if(!('IntersectionObserver' in window)){els.forEach(function(e){e.classList.add('is-in')});return}
+  var io=new IntersectionObserver(function(en){en.forEach(function(e){
+    if(e.isIntersecting){e.target.classList.add('is-in');io.unobserve(e.target)}})},
+    {rootMargin:'0px 0px -10% 0px',threshold:.1});
+  els.forEach(function(e){io.observe(e)});
+})();
+</script>
+</body>
+</html>
