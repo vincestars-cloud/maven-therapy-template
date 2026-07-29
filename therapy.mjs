@@ -812,20 +812,40 @@ $('.n4-footer_link_text, .nav__dropdown-item, .n4-industry_links_heading').each(
   if (/our clinicians/i.test($(el).text())) $(el).text('Careers');
 });
 
-// 4. real carrier logos (SVGs from the existing asset set) instead of wordmarks
+// 4. carrier logos — collision-template treatment: monochrome marks sitting
+//    DIRECTLY on the dark section (no white chips), thin dividers between them,
+//    optically normalised. Per-mark height, because a wide wordmark at the same
+//    pixel height dwarfs a square emblem.
 const LOGOS = [
-  ['aetna.svg', 'Aetna'], ['bcbs.svg', 'Blue Cross Blue Shield'], ['cigna.svg', 'Cigna'],
-  ['uhc.svg', 'UnitedHealthcare'], ['humana.svg', 'Humana'], ['oscar.svg', 'Oscar'],
-  ['hsafsa.svg', 'HSA / FSA eligible'],
+  ['aetna.svg',  'Aetna',                   30],
+  ['bcbs.svg',   'Blue Cross Blue Shield',  34],
+  ['cigna.svg',  'Cigna',                   28],
+  ['uhc.svg',    'UnitedHealthcare',        26],
+  ['humana.svg', 'Humana',                  24],
+  ['oscar.svg',  'Oscar',                   26],
+  ['hsafsa.svg', 'HSA / FSA eligible',      30],
 ];
 $('.n4-marquee_logo_wrap').each((i, el) => {
-  const [file, alt] = LOGOS[i % LOGOS.length];
+  const [file, alt, h] = LOGOS[i % LOGOS.length];
   $(el).empty().append(
-    `<span style="display:inline-flex;align-items:center;justify-content:center;height:58px;` +
-    `padding:0 22px;border-radius:10px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.14)">` +
-    `<img src="./media/insurers/${file}" alt="${alt}" loading="lazy" ` +
-    `style="height:30px;width:auto;max-width:150px;object-fit:contain"></span>`);
+    `<img src="./media/insurers/${file}" alt="${alt}" loading="lazy" class="ins-mark" ` +
+    `style="height:${h}px;width:auto;max-width:158px;object-fit:contain">`);
 });
+$('head').append(`<style>
+  .ins-mark{filter:brightness(0) invert(1);opacity:.62;transition:opacity .2s}
+  .n4-marquee_logo_wrap:hover .ins-mark{opacity:1}
+  .n4-main_marquee_component{border-top:1px solid #58eda226;border-bottom:1px solid #58eda226}
+  .n4-marquee_logo_wrap{border-left:1px solid #58eda226}
+</style>`);
+{
+  const comp = $('.n4-main_marquee_component').first();
+  if (comp.length && !$('#insCaption').length) {
+    comp.after('<p id="insCaption" style="margin:22px auto 0;max-width:760px;text-align:center;' +
+      'font:400 15px/1.6 Inter,Arial,sans-serif;color:rgba(255,255,255,.6)">' +
+      'In-network with most major plans &mdash; and clear self-pay rates if we are not. ' +
+      'Send us your card and we will check your benefits before your first session.</p>');
+  }
+}
 
 // 5. MP4 is now the smaller file — serve it first
 $('script:not([src])').each((_, el) => {
