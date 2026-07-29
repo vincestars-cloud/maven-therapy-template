@@ -397,6 +397,8 @@ $('.n4-stats_item_wrap').each((i, wrap) => {
   const dash = (C * pct / 100).toFixed(1);
   const [c0, c1] = RING_HUE[i % RING_HUE.length];
   const gid = `ringgrad${i}`;
+  // dasharray = full circumference, dashoffset animates C -> (C - dash) so the
+  // arc draws in when the block scrolls into view
   $(wrap).find('svg').remove();            // drop the reference's own thin ring
   $(wrap).css('position', 'relative').prepend(
     `<svg viewBox="0 0 320 320" aria-hidden="true" style="position:absolute;inset:0;` +
@@ -405,8 +407,11 @@ $('.n4-stats_item_wrap').each((i, wrap) => {
     `<stop offset="0%" stop-color="${c0}"/><stop offset="100%" stop-color="${c1}"/>` +
     `</linearGradient></defs>` +
     `<circle cx="160" cy="160" r="${R}" fill="none" stroke="#e2ddd4" stroke-width="${SW}"/>` +
-    `<circle cx="160" cy="160" r="${R}" fill="none" stroke="url(#${gid})" stroke-width="${SW}" ` +
-    `stroke-linecap="round" stroke-dasharray="${dash} ${C.toFixed(1)}"/></svg>`);
+    `<circle class="ring-arc" cx="160" cy="160" r="${R}" fill="none" stroke="url(#${gid})" ` +
+    `stroke-width="${SW}" stroke-linecap="round" ` +
+    `stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${C.toFixed(1)}" ` +
+    `data-target="${(C - C * pct / 100).toFixed(1)}" ` +
+    `style="transition:stroke-dashoffset 1.4s cubic-bezier(.22,.8,.28,1)"/></svg>`);
   $(wrap).find('.n4-stats_item_body').css({position:'relative','z-index':'1'});
 });
 
@@ -823,6 +828,70 @@ $('.n4-stories_tabs_img').each((i, el) => {
     else el.css({'background-image':`url(./media/${n}.jpg)`,'background-size':'cover','background-position':'center'});
   }
 });
+
+
+/* ─────────────── 4p. RING FILL + REMAINING SLOTS ─────────────── */
+
+// arcs draw in when the stats block enters view; static under reduced-motion.
+// Numbers count up alongside, parsed from their own text so the markup stays
+// the single source of truth.
+$('body').append(`<script>
+(function(){
+  var arcs=[].slice.call(document.querySelectorAll('.ring-arc'));
+  var nums=[].slice.call(document.querySelectorAll('.n4-stats_item_number'));
+  if(!arcs.length) return;
+  var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function settle(){ arcs.forEach(function(a){ a.style.transition='none';
+    a.setAttribute('stroke-dashoffset', a.dataset.target); }); }
+  if(reduce||!('IntersectionObserver' in window)){ settle(); return; }
+  function countUp(el){
+    var raw=(el.textContent||'').trim();
+    var m=raw.match(/^([0-9.]+)(.*)$/); if(!m) return;      // 'Same week' -> skip
+    var end=parseFloat(m[1]), suffix=m[2], dec=(m[1].split('.')[1]||'').length;
+    var t0=null, dur=1400;
+    function step(ts){ if(!t0)t0=ts; var k=Math.min(1,(ts-t0)/dur);
+      var e=1-Math.pow(1-k,3);
+      el.textContent=(end*e).toFixed(dec)+suffix;
+      if(k<1) requestAnimationFrame(step); else el.textContent=raw; }
+    el.textContent=(0).toFixed(dec)+suffix;
+    requestAnimationFrame(step);
+  }
+  var io=new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      if(!en.isIntersecting) return;
+      arcs.forEach(function(a,i){
+        setTimeout(function(){ a.setAttribute('stroke-dashoffset', a.dataset.target); }, i*140);
+      });
+      nums.forEach(function(n,i){ setTimeout(function(){ countUp(n); }, i*140); });
+      io.disconnect();
+    });
+  },{threshold:.35});
+  io.observe(arcs[0].closest('.n4-stats_layout')||arcs[0]);
+})();
+<\/script>`);
+
+// remaining image slots, filled BY TYPE rather than dropping photos everywhere
+$('.n4-features_card_img').each((_, el) => $(el).attr('src','./media/feat-1.jpg').attr('loading','lazy').removeAttr('srcset'));
+$('.n4-features_card_img_globe').each((_, el) => $(el).attr('src','./media/feat-2.jpg').attr('loading','lazy').removeAttr('srcset'));
+$('.n4-features_card_bg_noise').each((_, el) =>
+  $(el).attr('src','./media/noise.png').css({opacity:'.05','mix-blend-mode':'overlay'}).removeAttr('srcset'));
+
+// the three chip images are icons, not photography
+const CHIP_ICON = [
+  '<svg viewBox="0 0 24 24" fill="none" stroke="%23013126" stroke-width="1.6"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z"/><circle cx="12" cy="12" r="2.5"/></svg>',
+  '<svg viewBox="0 0 24 24" fill="none" stroke="%23013126" stroke-width="1.6"><path d="M20.8 5.6a5 5 0 0 0-8.8-1.9 5 5 0 0 0-8.8 1.9c-1 3.5 2.4 6.6 8.8 11 6.4-4.4 9.8-7.5 8.8-11Z"/></svg>',
+  '<svg viewBox="0 0 24 24" fill="none" stroke="%23013126" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M8.5 14.5c1 1.2 2.2 1.8 3.5 1.8s2.5-.6 3.5-1.8M9 9.5h.01M15 9.5h.01"/></svg>',
+];
+$('.n4-featured_card_box_image').each((i, el) =>
+  $(el).attr('src', `data:image/svg+xml;utf8,${CHIP_ICON[i % CHIP_ICON.length]}`).removeAttr('srcset'));
+
+// footer star rating
+{
+  const star = '<path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1Z" fill="%23FBBC04"/>';
+  const stars = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 24">` +
+    [0,1,2,3,4].map(n=>`<g transform="translate(${n*24} 0)">${star}</g>`).join('') + `</svg>`;
+  $('.n4-footer_bottom_stars_img').attr('src', `data:image/svg+xml;utf8,${stars}`).removeAttr('srcset');
+}
 
 /* ─────────────── 4t. LATE FIXES ─────────────── */
 
