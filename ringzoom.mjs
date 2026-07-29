@@ -1,0 +1,13 @@
+import { chromium } from 'playwright';
+import path from 'path';
+const b=await chromium.launch();
+const c=await b.newContext({viewport:{width:1440,height:900},deviceScaleFactor:2});
+const p=await c.newPage();
+await p.goto('file://'+path.resolve('_therapy2/index.html'),{waitUntil:'load'});
+await p.waitForTimeout(1800);
+await p.evaluate(()=>document.querySelector('.n4-stats_item_wrap').scrollIntoView({block:'center'}));
+await p.waitForTimeout(500);
+const el=await p.$('.n4-stats_item_wrap');
+await el.screenshot({path:'_therapy2/ring-zoom.png'});
+console.log('zoom shot');
+await b.close();

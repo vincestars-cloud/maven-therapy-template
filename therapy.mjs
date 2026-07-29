@@ -383,18 +383,29 @@ const STATS = [
 $('.n4-stats_item_number').each((i, el) => { if (STATS[i]) $(el).text(STATS[i][0]); });
 $('.n4-stats_item_test').each((i, el) => { if (STATS[i]) $(el).text(STATS[i][1]); });
 
-// progress ring — sized to the measured 320x320 .n4-stats_item_wrap so it traces
-// the existing decorative circle instead of sitting inside it and crossing the
-// caption text (measure the container; do not guess the radius)
+// progress ring — thick stroke, rounded caps, a distinct hue per metric and a
+// subtle light->dark sweep along the arc. Sized to the measured 320px wrap.
+const RING_HUE = [
+  ['#5fd6a4', '#028c74'],   // green
+  ['#a8c8ff', '#2469ff'],   // blue
+  ['#4fb894', '#035748'],   // deep green
+  ['#5cc9dd', '#008799'],   // teal
+];
 $('.n4-stats_item_wrap').each((i, wrap) => {
   const pct = (STATS[i] || [])[2] || 0;
-  const R = 155, C = 2 * Math.PI * R;
+  const R = 148, SW = 22, C = 2 * Math.PI * R;
   const dash = (C * pct / 100).toFixed(1);
+  const [c0, c1] = RING_HUE[i % RING_HUE.length];
+  const gid = `ringgrad${i}`;
+  $(wrap).find('svg').remove();            // drop the reference's own thin ring
   $(wrap).css('position', 'relative').prepend(
     `<svg viewBox="0 0 320 320" aria-hidden="true" style="position:absolute;inset:0;` +
     `width:100%;height:100%;transform:rotate(-90deg);pointer-events:none;z-index:0">` +
-    `<circle cx="160" cy="160" r="${R}" fill="none" stroke="rgba(1,49,38,.09)" stroke-width="10"/>` +
-    `<circle cx="160" cy="160" r="${R}" fill="none" stroke="#028c74" stroke-width="10" ` +
+    `<defs><linearGradient id="${gid}" x1="0" y1="0" x2="1" y2="1">` +
+    `<stop offset="0%" stop-color="${c0}"/><stop offset="100%" stop-color="${c1}"/>` +
+    `</linearGradient></defs>` +
+    `<circle cx="160" cy="160" r="${R}" fill="none" stroke="#e2ddd4" stroke-width="${SW}"/>` +
+    `<circle cx="160" cy="160" r="${R}" fill="none" stroke="url(#${gid})" stroke-width="${SW}" ` +
     `stroke-linecap="round" stroke-dasharray="${dash} ${C.toFixed(1)}"/></svg>`);
   $(wrap).find('.n4-stats_item_body').css({position:'relative','z-index':'1'});
 });
@@ -779,6 +790,39 @@ $('body').append(`<script>
   show(0);
 })();
 <\/script>`);
+
+
+/* ─────────────── 4q. CONTEXTUAL IMAGERY ───────────────
+   One distinct still per slot, matched to what that slot is actually about —
+   no repeats, no filler. Sourced from Coverr (free commercial use) and graded
+   to the same curve as the hero so the set reads as one visual world. */
+const AUD_IMG = ['aud-individuals','aud-couples','aud-teens','aud-families','aud-workplace'];
+$('.n4-industry_visual_img').each((i, el) => {
+  const n = AUD_IMG[i];
+  if (!n) return;
+  $(el).attr('src', `./media/${n}.jpg`)
+       .attr('alt', '')
+       .attr('loading', 'lazy')
+       .removeAttr('srcset').removeAttr('sizes');
+});
+
+const STORY_IMG = ['story-1','story-2','story-3'];
+$('.n4-stories_tabs_img').each((i, el) => {
+  const n = STORY_IMG[i % STORY_IMG.length];
+  $(el).attr('src', `./media/${n}.jpg`)
+       .attr('alt', '')
+       .attr('loading', 'lazy')
+       .removeAttr('srcset').removeAttr('sizes');
+});
+
+// feature card backgrounds get the two remaining distinct stills
+['card-1','card-4'].forEach((n, i) => {
+  const el = $('.n4-features_card_bg_img').eq(i);
+  if (el.length) {
+    if (el[0].tagName === 'img') el.attr('src', `./media/${n}.jpg`).attr('loading','lazy');
+    else el.css({'background-image':`url(./media/${n}.jpg)`,'background-size':'cover','background-position':'center'});
+  }
+});
 
 /* ─────────────── 4t. LATE FIXES ─────────────── */
 

@@ -1,0 +1,14 @@
+import { chromium } from 'playwright';
+import path from 'path';
+const b=await chromium.launch();
+const c=await b.newContext({viewport:{width:1440,height:700}});
+const p=await c.newPage();
+await p.goto('file://'+path.resolve('_therapy2/index.html'),{waitUntil:'load'});
+await p.waitForTimeout(1800);
+const el=await p.$('.n4-stats_layout');
+await p.evaluate(()=>document.querySelector('.n4-stats_layout').scrollIntoView({block:'center'}));
+await p.waitForTimeout(500);
+const bb=await el.boundingBox();
+await p.screenshot({path:'_therapy2/rings.png',clip:{x:0,y:Math.max(0,bb.y-20),width:1440,height:Math.min(560,bb.height+40)}});
+console.log('rings shot');
+await b.close();
