@@ -531,6 +531,31 @@ $('.n4-g_clickable_text').each((_, sr) => {
 
 
 
+
+/* ─────────────── 4r. LATE REVISIONS ─────────────── */
+
+// (a) care-card subtitles removed
+$('.n4-services_card_subtitle').remove();
+
+// (b) the empty 640px dark band under About — the parallax sticky visual. The
+//     About section now fills that role, so drop the band but keep .n4-parallax_overlap
+//     (it holds the stats).
+$('.n4-parallax_sticky').remove();
+
+// (c) stuck states: with IX2 stubbed, every reveal element is frozen at its
+//     initial opacity:0, and the first audience link keeps its active colour so
+//     it reads as permanently hovered. Force the resting state; let :hover own
+//     the highlight.
+$('head').append(`<style>
+  .n4-industry_link_item,[data-w-id],.n4-features_card_wrap,.n4-swiper_services_swiper_slide,
+  .n4-stats_item_wrap,.n4-main_marquee_list,.n4-services_text,.n4-hero_main_bg{
+    opacity:1!important;transform:none!important;visibility:visible!important}
+  .n4-industry_links_heading{color:#fff!important;transition:color .2s}
+  .n4-industry_link_item:hover .n4-industry_links_heading{color:#58eda2!important}
+  .n4-industry_link_item:hover svg{transform:translateX(6px)}
+  .n4-industry_link_item svg{transition:transform .2s}
+</style>`);
+
 /* ─────────────── 4s. CONTENT + STRUCTURE REVISIONS ─────────────── */
 
 // (2) nav — final item set
@@ -674,6 +699,89 @@ $('.n4-g_eyebrow_text, .n4-services_card_subtitle').each((_, el) => {
   </div>
 </section>
 <style>@media(max-width:991px){#about>div>div{grid-template-columns:1fr!important;gap:48px!important}}</style>`);
+  }
+}
+
+// (d) About "Read more" -> modal
+{
+  const about = $('#about');
+  if (about.length && !$('#aboutModal').length) {
+    // anchor to the credential-chip row (last element in the text column) — a
+    // positional div index missed it entirely
+    const chips = about.find('span').filter((_, el) =>
+      /LPC|EMDR|IFS|CCTP/i.test($(el).text() || '')).last().parent();
+    const target = chips.length ? chips : about.find('p').last();
+    target.after(
+      '<a href="#" id="aboutMore" style="display:inline-block;margin-top:24px;' +
+      'font:700 13px/1.4 Inter,Arial,sans-serif;color:#58eda2;' +
+      'border-bottom:1px solid currentColor;padding-bottom:2px">Read more &rarr;</a>');
+    $('body').append(`
+<div id="aboutModal" role="dialog" aria-modal="true" aria-labelledby="aboutModalTitle"
+     style="position:fixed;inset:0;z-index:9500;background:rgba(1,20,14,.62);
+            display:none;align-items:center;justify-content:center;padding:24px">
+  <div style="background:#fff;border-radius:20px;max-width:640px;width:100%;max-height:88vh;
+              overflow:hidden;display:flex;flex-direction:column">
+    <div style="padding:26px 30px;background:#013126;color:#fff;display:flex;
+                align-items:flex-start;justify-content:space-between;gap:16px">
+      <div>
+        <span style="display:block;margin-bottom:8px;font:700 11px/1.4 Inter,Arial,sans-serif;
+                     letter-spacing:.14em;text-transform:uppercase;color:#58eda2">About the practice</span>
+        <h3 id="aboutModalTitle" style="margin:0;font:300 26px/1.25 Inter,Arial,sans-serif">
+          How the work actually runs</h3>
+      </div>
+      <button id="aboutModalX" aria-label="Close"
+              style="flex:none;width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.18);
+                     color:#fff;display:grid;place-items:center;font-size:18px;line-height:1">&times;</button>
+    </div>
+    <div style="padding:26px 30px 30px;overflow-y:auto">
+      <p style="margin:0;font:400 16px/1.65 Inter,Arial,sans-serif;color:#64726f">
+        Sessions run 50 minutes, usually weekly to begin with and moving to fortnightly as things
+        settle. You set what gets discussed and when &mdash; nothing is pushed before you are
+        ready for it.</p>
+      <h4 style="margin:24px 0 0;font:700 13px/1.4 Inter,Arial,sans-serif;letter-spacing:.06em;
+                 text-transform:uppercase;color:#013126">What to expect early on</h4>
+      <ul style="margin:12px 0 0;padding-left:20px">
+        <li style="margin-bottom:8px;font:400 15px/1.55 Inter,Arial,sans-serif;color:#64726f">
+          A free 15-minute call first, to check this is the right fit before anything is booked.</li>
+        <li style="margin-bottom:8px;font:400 15px/1.55 Inter,Arial,sans-serif;color:#64726f">
+          A first session spent mapping what you want to be different, not recounting history.</li>
+        <li style="margin-bottom:8px;font:400 15px/1.55 Inter,Arial,sans-serif;color:#64726f">
+          An agreed pace, reviewed openly as you go rather than assumed.</li>
+        <li style="font:400 15px/1.55 Inter,Arial,sans-serif;color:#64726f">
+          A referral onward if someone else is genuinely the better fit.</li>
+      </ul>
+      <h4 style="margin:24px 0 0;font:700 13px/1.4 Inter,Arial,sans-serif;letter-spacing:.06em;
+                 text-transform:uppercase;color:#013126">Training and approach</h4>
+      <p style="margin:12px 0 0;font:400 15px/1.65 Inter,Arial,sans-serif;color:#64726f">
+        Licensed professional counselor with certification in EMDR and training in Internal Family
+        Systems, alongside CBT, DBT and Gottman method for couples. Which of those gets used depends
+        on what you bring, not on a fixed house style.</p>
+      <div style="margin-top:26px;display:flex;gap:12px;flex-wrap:wrap">
+        <a href="#contact" id="aboutModalCta"
+           style="display:inline-flex;align-items:center;height:48px;padding:0 28px;border-radius:500px;
+                  background:#028c74;color:#fff;font:600 16px/1 Inter,Arial,sans-serif">Book a consult</a>
+        <button id="aboutModalClose2"
+                style="height:48px;padding:0 28px;border-radius:500px;border:1px solid #013126;
+                       color:#013126;font:600 16px/1 Inter,Arial,sans-serif">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  var m=document.getElementById('aboutModal'),o=document.getElementById('aboutMore'),
+      x=document.getElementById('aboutModalX'),c=document.getElementById('aboutModalClose2');
+  if(!m||!o) return;
+  function open(e){ e&&e.preventDefault(); m.style.display='flex';
+    document.body.style.overflow='hidden'; x&&x.focus(); }
+  function close(){ m.style.display='none'; document.body.style.overflow=''; o.focus(); }
+  o.addEventListener('click',open); x&&x.addEventListener('click',close);
+  c&&c.addEventListener('click',close);
+  m.addEventListener('click',function(e){ if(e.target===m) close(); });
+  document.addEventListener('keydown',function(e){
+    if(e.key==='Escape'&&m.style.display==='flex') close(); });
+})();
+<\/script>`);
   }
 }
 

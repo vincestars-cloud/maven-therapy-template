@@ -1,0 +1,17 @@
+import { chromium } from 'playwright';
+import path from 'path';
+const b=await chromium.launch();
+const c=await b.newContext({viewport:{width:1440,height:900}});
+const p=await c.newPage();
+await p.goto('file://'+path.resolve('_therapy2/index.html'),{waitUntil:'load'});
+await p.waitForTimeout(1200);
+await p.evaluate(()=>document.getElementById('aboutMore').scrollIntoView({block:'center'}));
+await p.waitForTimeout(300);
+await p.click('#aboutMore');
+await p.waitForTimeout(500);
+const open=await p.evaluate(()=>getComputedStyle(document.getElementById('aboutModal')).display);
+console.log('modal display after click:',open);
+await p.screenshot({path:'_therapy2/modal.png'});
+await p.keyboard.press('Escape'); await p.waitForTimeout(300);
+console.log('after Escape:',await p.evaluate(()=>getComputedStyle(document.getElementById('aboutModal')).display));
+await b.close();
