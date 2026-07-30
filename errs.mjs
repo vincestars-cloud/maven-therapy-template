@@ -1,0 +1,16 @@
+import { chromium } from 'playwright';
+import path from 'path';
+const b=await chromium.launch();
+const c=await b.newContext({viewport:{width:390,height:844},isMobile:true,hasTouch:true});
+const p=await c.newPage();
+const seen=[];
+p.on('pageerror',e=>seen.push('PAGEERR: '+String(e).slice(0,140)));
+p.on('console',m=>{if(m.type()==='error')seen.push('CONSOLE: '+m.text().slice(0,140))});
+p.on('requestfailed',r=>seen.push('REQFAIL: '+r.url().split('/').slice(-1)[0].slice(0,60)));
+await p.goto('file://'+path.resolve('_therapy2/index.html'),{waitUntil:'load'});
+await p.waitForTimeout(2500);
+[...new Set(seen)].slice(0,8).forEach(s=>console.log(' ',s));
+const f=await p.evaluate(()=>{const e=document.querySelector('.n4-hero_main_pill_text');
+  return e?getComputedStyle(e).fontFamily:'(none)';});
+console.log('pill font-family:', f);
+await b.close();

@@ -666,7 +666,7 @@ $('.n4-services_card_wrap, .n4-swiper_services_swiper_slide, .n4-services-care_c
         </div>
       </div>
       <div>
-        <p style="font:700 11px/1.4 Inter,Arial,sans-serif;letter-spacing:.16em;
+        <p style="font:700 12px/1.4 Inter,Arial,sans-serif;letter-spacing:.16em;
                   text-transform:uppercase;color:#58eda2;margin:0 0 16px">About</p>
         <h2 style="font:300 clamp(30px,4vw,59.944px)/1.05 Inter,Arial,sans-serif;letter-spacing:-.02em;
                    margin:0;max-width:18ch">A room where you can finally
@@ -716,7 +716,7 @@ $('.n4-services_card_wrap, .n4-swiper_services_swiper_slide, .n4-services-care_c
     <div style="padding:26px 30px;background:#013126;color:#fff;display:flex;
                 align-items:flex-start;justify-content:space-between;gap:16px">
       <div>
-        <span style="display:block;margin-bottom:8px;font:700 11px/1.4 Inter,Arial,sans-serif;
+        <span style="display:block;margin-bottom:8px;font:700 12px/1.4 Inter,Arial,sans-serif;
                      letter-spacing:.14em;text-transform:uppercase;color:#58eda2">About the practice</span>
         <h3 id="aboutModalTitle" style="margin:0;font:300 26px/1.25 Inter,Arial,sans-serif">
           How the work actually runs</h3>
@@ -892,6 +892,55 @@ $('.n4-featured_card_box_image').each((i, el) =>
     [0,1,2,3,4].map(n=>`<g transform="translate(${n*24} 0)">${star}</g>`).join('') + `</svg>`;
   $('.n4-footer_bottom_stars_img').attr('src', `data:image/svg+xml;utf8,${stars}`).removeAttr('srcset');
 }
+
+
+/* ─────────────── 4o. MOBILE / A11Y HARDENING ─────────────── */
+
+// (1) the reference's site JS only lazy-loads code-split chunks that don't exist
+//     here (5 x maven-clinic.achunk.*.js) and throws on a null innerText. All
+//     behaviour on this page is our own now, so drop it rather than ship errors.
+$('script[src*="webflow-site"], script[src*="maven-clinic"]').remove();
+// remaining inline scripts that throw: a banner-cookie script reading
+// .web-banner-count (removed when the banner was rewritten) and two ad-pixel
+// snippets (FLPIXEL, mntn) whose loaders were already stripped.
+const THROWERS = /web-banner-count|FLPIXEL|mntn|is_viewable_verified_visit/;
+$('script:not([src])').each((_, el) => {
+  if (THROWERS.test($(el).html() || '')) $(el).remove();
+});
+
+// (2) fonts: the reference sets a licensed mono on the hero pill and licensed
+//     faces elsewhere. Those files are not served, so the browser falls back to
+//     default monospace/serif. Pin everything to the loaded stacks.
+$('head').append(`<style>
+  :root{--t-sans:'Inter',-apple-system,'Helvetica Neue',Arial,sans-serif;
+        --t-serif:'DM Serif Display',Georgia,serif}
+  body,.n4-hero_main_pill_text,[class*="n4-"],[class*="nav"],[class*="footer"]{
+    font-family:var(--t-sans)}
+  em,.n4-u-text-style-serif,[class*="cc-serif"]{font-family:var(--t-serif)}
+</style>`);
+
+// (3) touch targets: Apple HIG wants >=44px for anything tappable. Several CTAs
+//     sit at 36px and inline banner links at ~16px.
+$('head').append(`<style>
+  @media (max-width:991px){
+    .cta__green,.n4-btn_main_wrap a,.n4-btn_main_wrap button,
+    a.btn,.nav__link-item,.n4-footer_content_link a,.n4-footer_link_wrap a{
+      min-height:44px;display:inline-flex;align-items:center}
+    .banner-text a,.web-banner-container a{
+      display:inline-block;min-height:44px;line-height:44px}
+    .n4-footer_link_text{display:block;min-height:40px;line-height:40px}
+    .w-nav-button{min-width:44px;min-height:44px}
+    .branding__maven,.w-nav-brand{min-height:44px;display:inline-flex;align-items:center}
+    .n4-industry_link_item{min-height:56px}
+    #aboutMore{min-height:44px;display:inline-flex;align-items:center}
+    .n4-stories_tabs_link{min-height:44px;display:flex;align-items:center}
+    /* swiper arrows ship at 40x40 */
+    .n4-swiper_main_arrow,.swiper-button-next,.swiper-button-prev{
+      min-width:44px;min-height:44px}
+    /* eyebrow labels were 10-11px; lift to the 12px legibility floor */
+    .n4-g_eyebrow_text,.n4-tag_text,[class*="eyebrow"]{font-size:12px!important}
+  }
+</style>`);
 
 /* ─────────────── 4t. LATE FIXES ─────────────── */
 
